@@ -1,0 +1,261 @@
+<title>Robot de bureau v0</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: workbench — a large turntable viewer, a narrow spec sheet beside it (stacks on phones) */
+:root{
+  --bg:#f6f3f1; --panel:#ffffff; --ink:#2b2730; --muted:#6f6875; --line:#e6e0dc;
+  --accent:#e0705f; --accent-ink:#ffffff; --stage:#ece6e2; --chip:#f1ebe7;
+  --display:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1c1a1f; --panel:#252229; --ink:#efe9ec; --muted:#a59ca8; --line:#38333d;
+  --accent:#f08b7b; --accent-ink:#1c1a1f; --stage:#2a262e; --chip:#302b35; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#1c1a1f; --panel:#252229; --ink:#efe9ec; --muted:#a59ca8; --line:#38333d;
+  --accent:#f08b7b; --accent-ink:#1c1a1f; --stage:#2a262e; --chip:#302b35; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 32px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,4vw,36px);margin:0;letter-spacing:.2px;text-wrap:balance}
+.sub{color:var(--muted);margin:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;background:var(--stage);border-radius:18px;min-height:420px;aspect-ratio:4/3;max-width:100%;overflow:hidden}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.views{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.views button{font:600 13px var(--body);border:1px solid var(--line);background:var(--panel);color:var(--ink);
+  padding:7px 12px;border-radius:999px;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.views button:focus-visible,.part:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{position:absolute;right:12px;bottom:10px;color:var(--muted);font-size:12px}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+.loading[hidden]{display:none}
+aside{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.card h2{font:600 16px var(--display);margin:0 0 8px}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fig b{display:block;font:600 19px var(--display);font-variant-numeric:tabular-nums}
+.fig span{color:var(--muted);font-size:12px}
+.parts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.part{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:10px;
+  padding:6px 8px;border-radius:9px;cursor:pointer;border:0;background:none;color:inherit;text-align:left;font:inherit;width:100%}
+.part:hover,.part[aria-pressed="true"]{background:var(--chip)}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.pn{font-size:14px;min-width:0}
+.pn small{display:block;color:var(--muted);font-size:12px}
+.dim{font:12px var(--mono);color:var(--muted);white-space:nowrap}
+.tag{font:600 10.5px var(--body);letter-spacing:.6px;text-transform:uppercase;color:var(--accent)}
+.notes{margin:0;padding-left:18px;color:var(--ink)}
+.notes li{margin:3px 0}
+.muted{color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Robot de bureau — v0</h1>
+      <p class="sub">Premier jet du design, avec les vraies dimensions des pièces de la liste d'achat.</p>
+    </div>
+    <span class="tag">Aperçu · rien n'est figé</span>
+  </header>
+
+  <div class="grid">
+    <div class="stage">
+      <canvas id="cv" aria-label="Modèle 3D du robot, faites glisser pour tourner"></canvas>
+      <div class="loading" id="loading">Chargement du modèle…</div>
+      <div class="views" role="group" aria-label="Vue">
+        <button id="v-full" aria-pressed="true">Assemblé</button>
+        <button id="v-xray" aria-pressed="false">Voir l'intérieur</button>
+        <button id="v-explode" aria-pressed="false">Éclaté</button>
+      </div>
+      <div class="hint">Glisser pour tourner · molette / pincer pour zoomer</div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h2>En chiffres</h2>
+        <div class="figs">
+          <div class="fig"><b>8 × 8 × 8,4</b><span>cm (L × P × H)</span></div>
+          <div class="fig"><b>3</b><span>pièces à imprimer</span></div>
+          <div class="fig"><b>≈ 60 g</b><span>de PLA (≈ 1,50 €)</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Ce qu'il y a dedans</h2>
+        <ul class="parts" id="parts"></ul>
+        <p class="muted" style="margin:8px 0 0;font-size:12.5px">Clique sur une pièce pour la repérer dans le modèle.</p>
+      </div>
+      <div class="card">
+        <h2>Ce qui reste à faire</h2>
+        <ul class="notes">
+          <li>Passages de fils et fixations de l'écran à affiner.</li>
+          <li>Ajustements après réception des pièces (5 mesures).</li>
+          <li>Couleurs au choix selon le filament du beau-père (façade en noir conseillée).</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="robot-model.js"></script>
+<script>
+const PARTS = [
+  {k:["shell"], n:"Coque", s:"imprimée en 3D", d:"80 × 80 × 84"},
+  {k:["chassis"], n:"Châssis", s:"imprimé en 3D · plancher et supports", d:"80 × 80"},
+  {k:["faceplate"], n:"Façade", s:"imprimée en 3D, en noir", d:"40 × 26"},
+  {k:["oled_pcb","screen","eyes"], n:"Écran OLED 1,3″", s:"les yeux", d:"35,5 × 33,7"},
+  {k:["touch"], n:"Capteur de caresse", s:"sous le dessus de la tête", d:"15 × 11"},
+  {k:["nano"], n:"Arduino Nano R4", s:"le cerveau (Simulink)", d:"45 × 18"},
+  {k:["motors"], n:"2 moteurs N20", s:"fils déjà soudés", d:"24 × 12 × 10"},
+  {k:["wheels"], n:"2 roues", s:"Pololu", d:"Ø 32 × 7"},
+  {k:["caster"], n:"Bille folle", s:"3e point d'appui", d:"h 10,2"},
+  {k:["cliff_sensors"], n:"2 capteurs anti-chute", s:"il ne tombe pas du bureau", d:"7,6 × 12,7"},
+  {k:["battery"], n:"Batterie 1000 mAh", s:"LiPo protégée", d:"40 × 30 × 7,8"},
+  {k:["charger"], n:"Chargeur USB-C", s:"port à l'arrière", d:"28 × 17"},
+  {k:["boost"], n:"Régulateur 5 V", s:"", d:"18 × 11"},
+  {k:["driver"], n:"Driver moteurs", s:"DRV8835", d:"10,2 × 17,8"},
+];
+
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 5000);
+const controls = new THREE.OrbitControls(camera, cv);
+controls.enableDamping = true; controls.enablePan = false;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7f78, 0.9));
+const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(2, 3, 2.5); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-2, 1.5, -2); scene.add(rim);
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nodes = {}; let root, H = 1, mode = 'full', selected = null, explodeT = 0;
+let eyes = null;
+
+function resize(){
+  const r = cv.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false);
+  camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(cv);
+
+function glbBuffer(){ const bin = atob(window.ROBOT_GLB || ''); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+new THREE.GLTFLoader().parse(glbBuffer(), '', g => {
+  root = new THREE.Group(); const pivot = new THREE.Group(); pivot.add(g.scene); root.add(pivot); scene.add(root);
+  // Normalise: Z-up CAD -> Y-up, and centre on the ground
+  let box = new THREE.Box3().setFromObject(root);
+  const sz = box.getSize(new THREE.Vector3());
+  if (sz.z > sz.y * 1.02) { g.scene.rotation.x = -Math.PI / 2; }
+  pivot.rotation.y = Math.PI;  // CAD front (+Y) faces the camera
+  box = new THREE.Box3().setFromObject(root);
+  const s = 1 / Math.max(...box.getSize(new THREE.Vector3()).toArray());
+  root.scale.setScalar(s); box = new THREE.Box3().setFromObject(root);
+  const c = box.getCenter(new THREE.Vector3());
+  root.position.set(-c.x, -box.min.y, -c.z);
+  H = box.max.y - box.min.y;
+  g.scene.traverse(o => {
+    if (o.isMesh) {
+      o.material = o.material.clone();
+      o.material.side = THREE.DoubleSide;
+      o.material.metalness = 0; o.material.roughness = 0.62;
+      o.userData.base = o.material.color.clone();
+    }
+    let p = o; while (p && !PARTS.some(P => P.k.includes(p.name))) p = p.parent;
+    if (p && o.isMesh) (nodes[p.name] ||= []).push(o);
+  });
+  (nodes.eyes||[]).forEach(m => { m.material.emissive = new THREE.Color(0x9fe8ff); m.material.emissiveIntensity = 0.9; });
+  eyes = (nodes.eyes||[])[0] || null;
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(1.2, 64), new THREE.ShadowMaterial({opacity:0.12}));
+  ground.rotation.x = -Math.PI/2; scene.add(ground);
+  camera.position.set(1.2, 0.8, 1.75); controls.target.set(0, H*0.48, 0); controls.update();
+  document.getElementById('loading').hidden = true;
+  buildList(); applyMode();
+}, () => { document.getElementById('loading').textContent = "Le modèle n'a pas pu se charger."; });
+
+function meshes(keys){ return keys.flatMap(k => nodes[k] || []); }
+
+function applyMode(){
+  const shell = meshes(['shell']);
+  shell.forEach(m => {
+    m.material.transparent = mode === 'xray';
+    m.material.opacity = mode === 'xray' ? 0.16 : 1;
+    m.material.depthWrite = mode !== 'xray';
+  });
+  paintSelection();
+}
+function paintSelection(){
+  Object.values(nodes).flat().forEach(m => {
+    const isSel = selected && selected.k.some(k => (nodes[k]||[]).includes(m));
+    m.material.color.copy(m.userData.base);
+    if (selected && !isSel) m.material.color.lerp(new THREE.Color(0xbdb6b2), 0.65);
+    if (!(nodes.eyes||[]).includes(m)) {
+      m.material.emissive = new THREE.Color(isSel ? 0xe0705f : 0x000000);
+      m.material.emissiveIntensity = isSel ? 0.35 : 0;
+    }
+  });
+}
+
+function buildList(){
+  const ul = document.getElementById('parts');
+  PARTS.forEach((P, i) => {
+    const m = meshes(P.k)[0]; const col = m ? '#' + m.userData.base.getHexString() : '#ccc';
+    const li = document.createElement('li');
+    li.innerHTML = `<button class="part" id="part-${i}" aria-pressed="false"><span class="dot" style="background:${col}"></span>
+      <span class="pn">${P.n}${P.s ? `<small>${P.s}</small>` : ''}</span><span class="dim">${P.d}</span></button>`;
+    li.firstElementChild.addEventListener('click', e => {
+      selected = selected === P ? null : P;
+      document.querySelectorAll('.part').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      if (selected) e.currentTarget.setAttribute('aria-pressed', 'true');
+      if (selected && !P.k.includes('shell') && mode === 'full') setMode('xray'); else paintSelection();
+    });
+    ul.appendChild(li);
+  });
+}
+
+function setMode(m){
+  mode = m;
+  [['full','v-full'],['xray','v-xray'],['explode','v-explode']].forEach(([k,id]) =>
+    document.getElementById(id).setAttribute('aria-pressed', String(k === m)));
+  applyMode();
+}
+document.getElementById('v-full').onclick = () => setMode('full');
+document.getElementById('v-xray').onclick = () => setMode('xray');
+document.getElementById('v-explode').onclick = () => setMode('explode');
+
+const clock = new THREE.Clock();
+const LIFT = ['shell','faceplate','oled_pcb','screen','eyes','touch'];
+const _q = new THREE.Quaternion(), _s = new THREE.Vector3();
+function liftNode(n, amount){
+  n.userData.h ??= n.position.clone();
+  n.parent.getWorldQuaternion(_q); n.parent.getWorldScale(_s);
+  const d = new THREE.Vector3(0, amount / _s.y, 0).applyQuaternion(_q.invert());
+  n.position.copy(n.userData.h).add(d);
+}
+(function loop(){
+  requestAnimationFrame(loop);
+  const t = clock.elapsedTime;
+  if (root) {
+    const dt = Math.min(clock.getDelta(), 0.1);
+    const target = mode === 'explode' ? 1 : 0;
+    explodeT += (target - explodeT) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 7));
+    if (Math.abs(target - explodeT) < 0.002) explodeT = target;
+    LIFT.forEach(k => { const n = root.getObjectByName(k); if (n) liftNode(n, explodeT * H * 0.42); });
+    controls.target.y = H * (0.48 + 0.2 * explodeT);
+    if (!reduceMotion) {
+      const ph = t % 4.2, open = !(ph > 3.98 && ph < 4.16);
+      (nodes.eyes || []).forEach(m => { m.visible = open; });
+    }
+  }
+  controls.update(); renderer.render(scene, camera);
+})();
+</script>

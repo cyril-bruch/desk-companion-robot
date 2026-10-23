@@ -50,7 +50,7 @@ Model-Based Design workflow.
 
 ## Roadmap
 - [ ] Requirements & bill of materials
-- [ ] 3D design v1 — fit test print
+- [ ] 3D design v1 — fit test print (v0 preview done: `cad/src/robot.py`)
 - [ ] Component bring-up in Simulink (motors, IR, touch, OLED driver block)
 - [ ] Stateflow behaviours (SLEEP / AWAKE / WANDER / HAPPY)
 - [ ] Final assembly
