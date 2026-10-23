@@ -34,7 +34,7 @@ SLEEP  --(toucher)-->  AWAKE  --(timer)-->  WANDER
 WANDER : avance, tourne au hasard ; bord détecté -> recule + tourne
 ```
 
-## Liste des pièces (BOM) — brouillon, prix indicatifs à vérifier
+## Liste des pièces (BOM) — résumé (version détaillée à commander : `docs/bom.md`)
 | # | Pièce | Rôle | Prix ~ | Statut |
 |---|---|---|---|---|
 | 1 | Arduino Nano R4 | Cerveau | 15–20 € | à acheter |
