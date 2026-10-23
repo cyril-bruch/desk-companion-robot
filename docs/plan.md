@@ -7,7 +7,7 @@ _Mis à jour : 23/10/2026_
 |---|---|
 | Approche | Design sur mesure (pièces 3D par Claude, impression par Cyril) |
 | Deadline | Anniversaire dans plus d'un mois → on a le temps d'itérer |
-| Budget composants | 20–40 € visé au départ → ≈ 100 € avec références précises (à valider) |
+| Budget composants | 20–40 € visé au départ → ≈ 167 € (dont 49 € d'outils), liens vérifiés |
 | Comportements v1 | Yeux animés sur écran · réagit au toucher · se déplace sur le bureau |
 | Carte | **Arduino Nano R4** (voir justification) |
 
@@ -35,7 +35,7 @@ WANDER : avance, tourne au hasard ; bord détecté -> recule + tourne
 ```
 
 ## Liste des pièces
-Voir **`docs/bom.md`** (références exactes, dimensions, liens). Tout est acheté neuf, ≈ 100 € + port.
+Voir **`docs/bom.md`** (liens directs vérifiés, dimensions). Tout est acheté neuf, ≈ 167 € dont ≈ 49 € d'outillage réutilisable.
 
 ## Le point technique le plus dur (côté Simulink)
 Il n'existe pas de bloc Simulink « OLED » prêt à l'emploi. Il faudra créer un **bloc driver
