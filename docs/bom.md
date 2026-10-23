@@ -3,7 +3,7 @@
 _Vérifié le 23/10/2026 : chaque lien, prix et dimension a été relevé sur la page produit._
 _Le prix affiché par AliExpress est celui de l'option la moins chère : **choisis bien l'option indiquée**._
 
-**Total ≈ 55 € outils compris** (≈ 38 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
+**Total ≈ 60 € outils compris** (≈ 44 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
 (toujours disponible dans l'historique Git). Livraison AliExpress : 1 à 3 semaines.
 
 ---
@@ -34,9 +34,10 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 
 | # | Pièce | Option à choisir | Prix | Lien |
 |---|---|---|---|---|
-| 12 | Fer à souder 80 W réglable, écran LCD | **220V EU PLUG** + **936R SET1** | 7,99 € | [lien](https://fr.aliexpress.com/item/1005007010264876.html) |
+| 12 | Kit fer à souder 80 W réglable, écran LCD — **avec fil à souder**, tresse, pompe, pinces, support | **220V EU PLUG** + **936R SET5** (⚠️ SET1 = fer seul, sans étain) | 12,19 € | [lien](https://fr.aliexpress.com/item/1005007010264876.html) |
 | 13 | Kit vis + écrous M2 à M5 | 320 pièces | 3,59 € | [lien](https://fr.aliexpress.com/item/1005010552853863.html) |
 | 14 | Câbles Dupont 40 broches | **20 cm**, Femelle-Femelle + Mâle-Femelle | ≈ 2 € | [lien](https://fr.aliexpress.com/item/1005004631908016.html) |
+| 15 | Adhésif double face extra-fort (fixe les petites cartes dans leurs baies) | — | 2,09 € | [lien](https://fr.aliexpress.com/item/1005007168731397.html) |
 
 ---
 
