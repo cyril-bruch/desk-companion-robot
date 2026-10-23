@@ -49,8 +49,9 @@ The mechanical design was deliberately delegated in order to focus on the
 Model-Based Design workflow.
 
 ## Roadmap
-- [ ] Requirements & bill of materials
-- [ ] 3D design v1 — fit test print (v0 preview done: `cad/src/robot.py`)
+- [x] Requirements & bill of materials
+- [x] 3D design v1 (`cad/src/robot.py`, print guide in `docs/impression.md`)
+- [ ] Print the parts
 - [ ] Component bring-up in Simulink (motors, IR, touch, OLED driver block)
 - [ ] Stateflow behaviours (SLEEP / AWAKE / WANDER / HAPPY)
 - [ ] Final assembly

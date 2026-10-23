@@ -60,8 +60,8 @@ aside{display:flex;flex-direction:column;gap:14px;min-width:0}
 <div class="wrap">
   <header>
     <div>
-      <h1>Robot de bureau — v0</h1>
-      <p class="sub">Premier jet du design, avec les vraies dimensions des pièces de la liste d'achat.</p>
+      <h1>Robot de bureau — v1</h1>
+      <p class="sub">Design v1 avec les pièces commandées sur AliExpress, marges larges pour les cotes non publiées.</p>
     </div>
     <span class="tag">Aperçu · rien n'est figé</span>
   </header>
@@ -82,9 +82,9 @@ aside{display:flex;flex-direction:column;gap:14px;min-width:0}
       <div class="card">
         <h2>En chiffres</h2>
         <div class="figs">
-          <div class="fig"><b>8 × 8 × 8,4</b><span>cm (L × P × H)</span></div>
-          <div class="fig"><b>3</b><span>pièces à imprimer</span></div>
-          <div class="fig"><b>≈ 60 g</b><span>de PLA (≈ 1,50 €)</span></div>
+          <div class="fig"><b>8,6 × 9,2 × 8,7</b><span>cm (L × P × H)</span></div>
+          <div class="fig"><b>4</b><span>modèles à imprimer</span></div>
+          <div class="fig"><b>≈ 85 g</b><span>de PLA (≈ 2 €)</span></div>
         </div>
       </div>
       <div class="card">
@@ -95,8 +95,8 @@ aside{display:flex;flex-direction:column;gap:14px;min-width:0}
       <div class="card">
         <h2>Ce qui reste à faire</h2>
         <ul class="notes">
-          <li>Passages de fils et fixations de l'écran à affiner.</li>
-          <li>Ajustements après réception des pièces (5 mesures).</li>
+          <li>Clique sur une pièce : les autres deviennent transparentes.</li>
+          <li>Cartes sans cotes publiées : emplacements larges + adhésif double face.</li>
           <li>Couleurs au choix selon le filament du beau-père (façade en noir conseillée).</li>
         </ul>
       </div>
@@ -110,20 +110,21 @@ aside{display:flex;flex-direction:column;gap:14px;min-width:0}
 <script src="robot-model.js"></script>
 <script>
 const PARTS = [
-  {k:["shell"], n:"Coque", s:"imprimée en 3D", d:"80 × 80 × 84"},
-  {k:["chassis"], n:"Châssis", s:"imprimé en 3D · plancher et supports", d:"80 × 80"},
-  {k:["faceplate"], n:"Façade", s:"imprimée en 3D, en noir", d:"40 × 26"},
-  {k:["oled_pcb","screen","eyes"], n:"Écran OLED 1,3″", s:"les yeux", d:"35,5 × 33,7"},
-  {k:["touch"], n:"Capteur de caresse", s:"sous le dessus de la tête", d:"15 × 11"},
+  {k:["shell"], n:"Coque", s:"imprimée en 3D", d:"86 × 92 × 87"},
+  {k:["faceplate"], n:"Façade", s:"imprimée en noir (×2 avec la rechange)", d:"40 × 26"},
+  {k:["chassis"], n:"Châssis", s:"imprimé · plancher, supports, étagères", d:"86 × 92"},
+  {k:["wheel_l","wheel_r","tires"], n:"Roues + pneus", s:"imprimées (×4) + 2 joints toriques chacune", d:"Ø 30,6 × 8"},
+  {k:["oled_pcb","screen","eyes"], n:"Écran OLED 1,3″", s:"les yeux", d:"35,5 × 33,5"},
+  {k:["touch"], n:"Capteur de caresse", s:"collé sous le creux de la tête", d:"15 × 11"},
+  {k:["cliff_sensors"], n:"2 capteurs anti-chute", s:"sous les étagères avant, regardent le sol", d:"32 × 14"},
   {k:["nano"], n:"Arduino Nano R4", s:"le cerveau (Simulink)", d:"45 × 18"},
-  {k:["motors"], n:"2 moteurs N20", s:"fils déjà soudés", d:"24 × 12 × 10"},
-  {k:["wheels"], n:"2 roues", s:"Pololu", d:"Ø 32 × 7"},
-  {k:["caster"], n:"Bille folle", s:"3e point d'appui", d:"h 10,2"},
-  {k:["cliff_sensors"], n:"2 capteurs anti-chute", s:"il ne tombe pas du bureau", d:"7,6 × 12,7"},
-  {k:["battery"], n:"Batterie 1000 mAh", s:"LiPo protégée", d:"40 × 30 × 7,8"},
-  {k:["charger"], n:"Chargeur USB-C", s:"port à l'arrière", d:"28 × 17"},
-  {k:["boost"], n:"Régulateur 5 V", s:"", d:"18 × 11"},
-  {k:["driver"], n:"Driver moteurs", s:"DRV8835", d:"10,2 × 17,8"},
+  {k:["motors"], n:"2 moteurs N20", s:"6 V · 100 tr/min", d:"26 × 12 × 10"},
+  {k:["caster"], n:"Bille folle", s:"3e point d'appui, à l'arrière", d:"h 15"},
+  {k:["battery"], n:"Batterie 1000 mAh", s:"sur l'étagère arrière", d:"40 × 30 × 8"},
+  {k:["charger"], n:"Chargeur USB-C", s:"port à l'arrière", d:"≈ 28 × 17"},
+  {k:["boost"], n:"Régulateur 5 V", s:"", d:"≈ 18 × 12"},
+  {k:["driver"], n:"Driver moteurs", s:"DRV8833", d:"≈ 18 × 16"},
+  {k:["switch"], n:"Interrupteur", s:"à l'arrière", d:"8,5 × 3,5"},
 ];
 
 const cv = document.getElementById('cv');
@@ -155,7 +156,7 @@ new THREE.GLTFLoader().parse(glbBuffer(), '', g => {
   // Normalise: Z-up CAD -> Y-up, and centre on the ground
   let box = new THREE.Box3().setFromObject(root);
   const sz = box.getSize(new THREE.Vector3());
-  if (sz.z > sz.y * 1.02) { g.scene.rotation.x = -Math.PI / 2; }
+  // the GLB exported by CadQuery is already Y-up
   pivot.rotation.y = Math.PI;  // CAD front (+Y) faces the camera
   box = new THREE.Box3().setFromObject(root);
   const s = 1 / Math.max(...box.getSize(new THREE.Vector3()).toArray());
@@ -184,20 +185,17 @@ new THREE.GLTFLoader().parse(glbBuffer(), '', g => {
 
 function meshes(keys){ return keys.flatMap(k => nodes[k] || []); }
 
-function applyMode(){
-  const shell = meshes(['shell']);
-  shell.forEach(m => {
-    m.material.transparent = mode === 'xray';
-    m.material.opacity = mode === 'xray' ? 0.16 : 1;
-    m.material.depthWrite = mode !== 'xray';
-  });
-  paintSelection();
-}
+function applyMode(){ paintSelection(); }
 function paintSelection(){
   Object.values(nodes).flat().forEach(m => {
     const isSel = selected && selected.k.some(k => (nodes[k]||[]).includes(m));
     m.material.color.copy(m.userData.base);
-    if (selected && !isSel) m.material.color.lerp(new THREE.Color(0xbdb6b2), 0.65);
+    const isShell = (nodes.shell||[]).includes(m);
+    const ghost = selected && !isSel;
+    m.material.transparent = ghost || (isShell && mode === 'xray');
+    m.material.opacity = ghost ? 0.12 : (isShell && mode === 'xray' ? 0.16 : 1);
+    m.material.depthWrite = !m.material.transparent;
+    if (ghost) m.material.color.lerp(new THREE.Color(0xbdb6b2), 0.5);
     if (!(nodes.eyes||[]).includes(m)) {
       m.material.emissive = new THREE.Color(isSel ? 0xe0705f : 0x000000);
       m.material.emissiveIntensity = isSel ? 0.35 : 0;
@@ -216,7 +214,7 @@ function buildList(){
       selected = selected === P ? null : P;
       document.querySelectorAll('.part').forEach(b => b.setAttribute('aria-pressed', 'false'));
       if (selected) e.currentTarget.setAttribute('aria-pressed', 'true');
-      if (selected && !P.k.includes('shell') && mode === 'full') setMode('xray'); else paintSelection();
+      paintSelection();
     });
     ul.appendChild(li);
   });
