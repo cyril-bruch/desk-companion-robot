@@ -7,7 +7,7 @@ _Mis à jour : 23/10/2026_
 |---|---|
 | Approche | Design sur mesure (pièces 3D par Claude, impression par Cyril) |
 | Deadline | Anniversaire dans plus d'un mois → on a le temps d'itérer |
-| Budget composants | 20–40 € visé au départ → ≈ 167 € (dont 49 € d'outils), liens vérifiés |
+| Budget composants | 20–40 € visé au départ → ≈ 55 € outils compris (version AliExpress, liens vérifiés) |
 | Comportements v1 | Yeux animés sur écran · réagit au toucher · se déplace sur le bureau |
 | Carte | **Arduino Nano R4** (voir justification) |
 
@@ -22,7 +22,7 @@ _Mis à jour : 23/10/2026_
 ## Concept du robot (v1)
 Petit corps arrondi (~8 × 8 × 7 cm), l'écran OLED fait office de visage avec deux yeux.
 Deux petites roues motorisées + une bille folle. Un capteur tactile caché sous le dessus de la tête.
-Deux capteurs IR (Pololu QTR-1A) pointés vers le bas à l'avant pour **ne jamais tomber du bureau**.
+Deux capteurs IR (TCRT5000) pointés vers le bas à l'avant pour **ne jamais tomber du bureau**.
 Batterie rechargeable en USB-C, interrupteur on/off.
 
 ### Machine à états (Stateflow) envisagée
@@ -35,7 +35,7 @@ WANDER : avance, tourne au hasard ; bord détecté -> recule + tourne
 ```
 
 ## Liste des pièces
-Voir **`docs/bom.md`** (liens directs vérifiés, dimensions). Tout est acheté neuf, ≈ 167 € dont ≈ 49 € d'outillage réutilisable.
+Voir **`docs/bom.md`** (liens AliExpress + Amazon vérifiés, dimensions). Tout neuf, ≈ 55 € outils compris.
 
 ## Le point technique le plus dur (côté Simulink)
 Il n'existe pas de bloc Simulink « OLED » prêt à l'emploi. Il faudra créer un **bloc driver

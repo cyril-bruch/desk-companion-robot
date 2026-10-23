@@ -1,59 +1,53 @@
-# Liste des pièces (BOM) — v1
+# Liste des pièces (BOM) — v1 « AliExpress »
 
-_Vérifié le 23/10/2026 : prix, stock et dimensions relevés sur chaque page produit._
-_Tout est acheté neuf. Les dimensions de la colonne « CAO » sont celles utilisées pour le design 3D._
+_Vérifié le 23/10/2026 : chaque lien, prix et dimension a été relevé sur la page produit._
+_Le prix affiché par AliExpress est celui de l'option la moins chère : **choisis bien l'option indiquée**._
 
-**Règle : commande exactement ces liens.** Une pièce « équivalente » peut avoir d'autres cotes.
+**Total ≈ 55 € outils compris** (≈ 38 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
+(toujours disponible dans l'historique Git). Livraison AliExpress : 1 à 3 semaines.
 
 ---
 
-## Commande 1 — RobotShop Europe (≈ 40 € + 10 € de port)
+## 1. Amazon — la carte (officielle, pour que Simulink marche à coup sûr)
 
-| # | Pièce | Produit | Dimensions (CAO) | Prix | Lien |
-|---|---|---|---|---|---|
-| 1 | Carte | Arduino Nano R4 with Headers (ABX00143) | 45 × 18 mm | 17,96 € | [lien](https://eu.robotshop.com/products/arduino-nano-r4-w-headers) |
-| 2 | Driver moteurs | Pololu DRV8835 Dual Motor Driver Carrier (#2135) | 10,2 × 17,8 mm | 7,65 € | [lien](https://eu.robotshop.com/products/controlador-de-motor-dual-drv8835) |
-| 3 | Roues | Pololu Wheel 32×7 mm Pair, noir (#1087) | Ø 32 × 7 mm, axe en D 3 mm | 4,90 € | [lien](https://eu.robotshop.com/products/pololu-wheel-32-7mm-black-pair) |
-| 4 | Bille folle | Pololu Ball Caster 3/8″ Metal Ball (#951) | hauteur 10,2 mm, entraxe vis 13,5 mm | 3,24 € | [lien](https://eu.robotshop.com/products/pololu-ball-caster-3-8-in-metal-ball) |
-| 5 | Anti-chute | Pololu QTR-1A Reflectance Sensor, lot de 2 (#2458) | 7,6 × 12,7 mm | 6,22 € | [lien](https://eu.robotshop.com/products/pololu-qtr-1a-reflectance-sensor-2pk) |
-
-## Commande 2 — Amazon.fr
-
-### Composants du robot (≈ 68 €)
-| # | Pièce | Produit | Dimensions (CAO) | Prix | Lien |
-|---|---|---|---|---|---|
-| 6 | Écran (visage) | OLED 1,3″ blanc I2C SH1106, lot de 2 (Binghe) | PCB 33,7 × 35,5 mm, zone active 29,4 × 14,7 mm | 11,99 € | [lien](https://www.amazon.fr/dp/B0DFCHBQQB) |
-| 7 | Moteurs | GA12-N20 réducteur métal, **fils déjà soudés**, lot de 2 | corps 24 × 12 × 10 mm, axe D 3 mm × 10 mm | 11,49 € | [lien](https://www.amazon.fr/dp/B0DPKYCZ97) |
-| 8 | Capteur caresse | TTP223 tactile capacitif, lot de 10 (JZK) | 15 × 11 mm | 6,29 € | [lien](https://www.amazon.fr/dp/B09VPK9N7F) |
-| 9 | Batterie | LiPo 3,7 V 1000 mAh 803040 avec protection PCM (Sunkoo) | 40 × 30 × 7,8 mm | 14,66 € | [lien](https://www.amazon.fr/dp/B0GJSH4J3S) |
-| 10 | Recharge USB-C | TP4056 USB-C double protection, lot de 6 (Aideepen) | ≈ 28 × 17 mm (à mesurer) | 6,99 € | [lien](https://www.amazon.fr/dp/B0BZSB3SBN) |
-| 11 | Régulateur 5 V | Boost 5 V 1 A fixe, puce TPS61023 (Annadue) | ≈ 18 × 11 mm (baie interne) | 10,85 € | [lien](https://www.amazon.fr/dp/B0HF5BZTPZ) |
-| 12 | Interrupteur | SS12D00G3 à glissière, lot de 10 | corps 8,5 × 3,5 mm | 5,69 € | [lien](https://www.amazon.fr/dp/B097D1Y3K5) |
-
-### Outillage et consommables — réutilisables (≈ 49 €)
-| # | Pièce | Produit | Prix | Lien |
+| Pièce | Produit | Dimensions (CAO) | Prix | Lien |
 |---|---|---|---|---|
-| 13 | Fer à souder | Kit 80 W réglable avec écran, 15 en 1 (étain, pompe, gaines, pannes) | 18,59 € | [lien](https://www.amazon.fr/dp/B0GF1ND4WY) |
-| 14 | Visserie | Vis M2 tête cylindrique + écrous, 502 pièces | 6,99 € | [lien](https://www.amazon.fr/dp/B0GKW37JWC) |
-| 15 | Câbles de test | ELEGOO 120 câbles Dupont (M-F, M-M, F-F) | 8,99 € | [lien](https://www.amazon.fr/dp/B01JD5WCG2) |
-| 16 | Fil fin | Fil silicone 26 AWG, 6 couleurs × 10 m | 13,99 € | [lien](https://www.amazon.fr/dp/B0F88ZWGLC) |
+| Carte | Arduino Nano R4 **with Headers** (ABX00143), officielle | 45 × 18 mm | 16,50 € | [Amazon](https://www.amazon.fr/dp/B0FH5Q9YND) |
+
+## 2. AliExpress — composants du robot
+
+| # | Pièce | Option à choisir | Dimensions (CAO) | Qté | Prix | Lien |
+|---|---|---|---|---|---|---|
+| 1 | Écran OLED 1,3″ SH1106 I2C | **BLANC** | 35,5 × 33,5 × 4,3 mm — broches **VDD-GND-SCK-SDA** | 1 | 2,76 € | [lien](https://fr.aliexpress.com/item/1005006862867338.html) |
+| 2 | Moteur N20 réducteur métal | **6V** + **100 tr/min** | Ø 12 × 26 mm (corps), axe D 3 × 10 mm, long. totale 36 mm | **2** | 2 × 1,94 € | [lien](https://fr.aliexpress.com/item/33022320164.html) |
+| 3 | Joints toriques (pneus des roues imprimées) | **OD30mm CS2.4mm** (lot de 50) | Ø ext. 30 mm, section 2,4 mm | 1 lot | 1,35 € | [lien](https://fr.aliexpress.com/item/1005008292519935.html) |
+| 4 | Bille folle (roue universelle) | — | hauteur 15 mm, bille Ø 12 mm | 1 | 1,40 € | [lien](https://fr.aliexpress.com/item/1005007057637397.html) |
+| 5 | Driver moteurs DRV8833 | **5pcs** | ≈ 18 × 16 mm (non publié, baie interne large) | 1 lot | 3,49 € | [lien](https://fr.aliexpress.com/item/1005007347094702.html) |
+| 6 | Capteur anti-chute TCRT5000 (module) | — | 32 × 14 mm, détection 1–25 mm | **2** | 2 × 0,41 € | [lien](https://fr.aliexpress.com/item/1005008593986708.html) |
+| 7 | Capteur caresse TTP223 | **TTP223** | 15 × 11 mm | 1 | 0,37 € | [lien](https://fr.aliexpress.com/item/1005008530579725.html) |
+| 8 | Batterie LiPo 803040 1000 mAh, protégée | **1 PCS** | 8 × 30 × 40 mm | 1 | 4,59 € | [lien](https://fr.aliexpress.com/item/1005008820788359.html) |
+| 9 | Chargeur TP4056 avec protection | **18650 Type-c** + **2pc** | ≈ 28 × 17 mm (non publié, à mesurer) | 1 lot | 2,38 € | [lien](https://fr.aliexpress.com/item/1005010585482772.html) |
+| 10 | Régulateur 5 V fixe TPS61023 | — | petit module (baie interne) | 1 | 3,39 € | [lien](https://fr.aliexpress.com/item/1005009465120439.html) |
+| 11 | Interrupteur à glissière SS12D00G3 | — | corps 8,5 × 3,5 mm | 1 lot | 0,63 € | [lien](https://fr.aliexpress.com/item/33013437240.html) |
+
+## 3. AliExpress — outillage et consommables (réutilisables)
+
+| # | Pièce | Option à choisir | Prix | Lien |
+|---|---|---|---|---|
+| 12 | Fer à souder 80 W réglable, écran LCD | **220V EU PLUG** + **936R SET1** | 7,99 € | [lien](https://fr.aliexpress.com/item/1005007010264876.html) |
+| 13 | Kit vis + écrous M2 à M5 | 320 pièces | 3,59 € | [lien](https://fr.aliexpress.com/item/1005010552853863.html) |
+| 14 | Câbles Dupont 40 broches | **20 cm**, Femelle-Femelle + Mâle-Femelle | ≈ 2 € | [lien](https://fr.aliexpress.com/item/1005004631908016.html) |
 
 ---
 
-## Total
-| | |
-|---|---|
-| RobotShop | ≈ 40 € + 10 € de port |
-| Amazon — composants | ≈ 68 € |
-| Amazon — outillage réutilisable | ≈ 49 € |
-| **Total** | **≈ 167 €**, dont ≈ 49 € d'outils qui te serviront pour les prochains projets |
-
-Économies possibles : sauter le fil silicone (−14 €, on utilise des câbles Dupont coupés).
+## Ce qui change par rapport au design v0
+- **Roues imprimées en 3D** avec un joint torique comme pneu (pas de roues N20 fiables sur AliExpress) → le design colle exactement.
+- **Moteurs** de 26 mm au lieu de 24, **bille folle** de 15 mm au lieu de 10,2, **capteurs anti-chute** plus grands (32 × 14) → j'adapte la CAO (v1).
+- Moteurs sans fils : 2 soudures par moteur.
 
 ## À savoir
-- **Moteurs** : vitesse lente (~60 tr/min sous 5 V → ~10 cm/s). Voulu : un robot lent est plus mignon et a le temps de détecter le bord du bureau.
-- **Soudure** : ~30 points faciles (broches des petites cartes, fils d'alimentation). Les moteurs ont déjà leurs fils.
-- **Dès réception** : 5 mesures à faire (je te dirai lesquelles), puis ajustement de la CAO avant l'impression finale.
-- **Recharge** : port USB-C du TP4056 à l'arrière du robot. LED rouge = en charge, verte = chargé.
+- **Dimensions « non publiées »** (DRV8833, TP4056) : le vendeur ne les donne pas. Ces cartes vont dans des baies internes larges ; tu les mesureras à réception et j'ajusterai.
+- **Écran** : l'ordre des broches est VDD-GND-SCK-SDA (VDD en premier), attention au câblage.
+- **Recharge** : port USB-C du TP4056 à l'arrière. LED rouge = en charge, bleue/verte = chargé.
 - **Batterie LiPo** : première charge sous surveillance.
 - **Règle d'alimentation** : interrupteur sur OFF quand la carte est branchée en USB au PC.
