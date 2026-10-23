@@ -1,0 +1,31 @@
+# --- Simulink / MATLAB : fichiers générés ---
+slprj/
+*_ert_rtw/
+*_grt_rtw/
+*_rtw/
+codegen/
+*.slxc
+*.mexw64
+*.mexa64
+*.asv
+*.autosave
+*.slx.r20*
+*.original
+
+# --- Compilation Arduino ---
+*.bin
+*.elf
+*.hex
+*.eep
+*.map
+*.o
+
+# --- CAD : fichiers temporaires / slicer ---
+*.gcode
+*.3mf.bak
+__pycache__/
+
+# --- Système ---
+.DS_Store
+Thumbs.db
+desktop.ini
