@@ -10,16 +10,16 @@ Les fichiers sont dans **`cad/print/`**. Ils sont **déjà tournés dans le bon 
 | Fichier | Contenu | Couleur conseillée | Durée estimée* |
 |---|---|---|---|
 | `PLATEAU_1_coque.stl` | la coque | blanc / crème / pastel | ~6 h |
-| `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs | n'importe laquelle | ~4 h 30 |
+| `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs + 2 patins arrière | n'importe laquelle | ~4 h 45 |
 | `PLATEAU_3_facades_noir.stl` | 2 façades | **noir** | ~25 min |
 
 \* estimation ; FlashPrint donne la durée exacte après le découpage. Total ≈ 95 g de PLA.
-Les pièces existent aussi une par une (`1_coque.stl`, `2_chassis.stl`, `3_facade_x2.stl`, `4_roue_x4.stl`, `5_capot_moteur_x3.stl`).
-Les roues et capots sont en double / triple : ce sont des rechanges.
+Les pièces existent aussi une par une (`1_coque.stl`, `2_chassis.stl`, `3_facade_x2.stl`, `4_roue_x4.stl`, `5_capot_moteur_x3.stl`, `6_patin_arriere_x2.stl`).
+Les roues, capots et patins sont en plusieurs exemplaires : ce sont des rechanges.
 
 ## Avant tout : une roue de test (15 min)
 Imprime **une seule roue** (`4_roue_x4.stl`) avec les réglages ci-dessous. Quand les pièces seront arrivées :
-elle doit s'emmancher **en forçant un peu** sur l'axe du moteur, et le joint torique doit tenir dans sa gorge.
+elle doit s'emmancher **en forçant un peu** sur l'axe du moteur, et les joints toriques 25 × 2,5 doivent tenir dans leurs gorges.
 Si c'est trop serré, foret de 3 mm à la main ; si c'est trop lâche, dis-le-moi, je corrige le trou.
 Si tu n'as l'imprimante qu'une fois, saute ce test : le trou est prévu serré, il se rattrape au foret.
 

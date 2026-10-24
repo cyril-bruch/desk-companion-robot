@@ -1,60 +1,63 @@
-# Liste des pièces (BOM) — v1 « AliExpress »
+# Liste des pièces (BOM) — v1 « Amazon »
 
-_Vérifié le 23–24/10/2026 : liens, prix et dimensions relevés sur AliExpress. Le 24/10, AliExpress a demandé un captcha sur les fiches produit : pour le MT3608 et le buzzer, prix et ventes ont été vérifiés dans les résultats de recherche, mais pas le nom exact des options._
-_Le prix affiché par AliExpress est celui de l'option la moins chère : **choisis bien l'option indiquée**._
+_Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur chaque fiche produit._
+**Une seule commande Amazon, pas de douane, livraison 1 à 3 jours.**
 
-**Total ≈ 59 € outils compris** (≈ 42 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
-(toujours disponible dans l'historique Git). Livraison AliExpress : 1 à 3 semaines.
-
----
-
-## 1. Amazon — la carte (officielle, pour que Simulink marche à coup sûr)
-
-| Pièce | Produit | Dimensions (CAO) | Prix | Lien |
-|---|---|---|---|---|
-| Carte | Arduino Nano R4 **with Headers** (ABX00143), officielle | 45 × 18 mm | 16,50 € | [Amazon](https://www.amazon.fr/dp/B0FH5Q9YND) |
-
-## 2. AliExpress — composants du robot
-
-| # | Pièce | Option à choisir | Dimensions (CAO) | Qté | Prix | Lien |
-|---|---|---|---|---|---|---|
-| 1 | Écran OLED 1,3″ SH1106 I2C | **BLANC** | 35,5 × 33,5 × 4,3 mm — broches **VDD-GND-SCK-SDA** | 1 | 2,76 € | [lien](https://fr.aliexpress.com/item/1005006862867338.html) |
-| 2 | Moteur N20 réducteur métal | **6V** + **100 tr/min** | Ø 12 × 26 mm (corps), axe D 3 × 10 mm, long. totale 36 mm | **2** | 2 × 1,94 € | [lien](https://fr.aliexpress.com/item/33022320164.html) |
-| 3 | Joints toriques (pneus des roues imprimées) | **OD30mm CS2.4mm** (lot de 50) | Ø ext. 30 mm, section 2,4 mm | 1 lot | 1,35 € | [lien](https://fr.aliexpress.com/item/1005008292519935.html) |
-| 4 | Bille folle (roue universelle) | — | hauteur 15 mm, bille Ø 12 mm | 1 | 1,40 € | [lien](https://fr.aliexpress.com/item/1005007057637397.html) |
-| 5 | Driver moteurs DRV8833 | **5pcs** | ≈ 18 × 16 mm (non publié, baie interne large) | 1 lot | 3,49 € | [lien](https://fr.aliexpress.com/item/1005007347094702.html) |
-| 6 | Capteur anti-chute TCRT5000 (module) | — | 32 × 14 mm, détection 1–25 mm | **2** | 2 × 0,41 € | [lien](https://fr.aliexpress.com/item/1005008593986708.html) |
-| 7 | Capteur caresse TTP223 | **TTP223** | 15 × 11 mm | 1 | 0,37 € | [lien](https://fr.aliexpress.com/item/1005008530579725.html) |
-| 8 | Batterie LiPo 803040 1000 mAh, protégée | **1 PCS** | 8 × 30 × 40 mm | 1 | 4,59 € | [lien](https://fr.aliexpress.com/item/1005008820788359.html) |
-| 9 | Chargeur TP4056 avec protection | **18650 Type-c** + **2pc** | ≈ 28 × 17 mm (non publié, à mesurer) | 1 lot | 2,38 € | [lien](https://fr.aliexpress.com/item/1005010585482772.html) |
-| 10 | Régulateur élévateur **MT3608** (batterie 3,7 V → **7,5 V** sur VIN de la Nano et les moteurs) | 1 pièce (2 si tu veux une rechange) | ≈ 36 × 17 mm, hauteur ≈ 12 mm avec le potentiomètre bleu | 1 | 1,00 € | [lien](https://fr.aliexpress.com/item/1005006361814667.html) |
-| 11 | **Interrupteur à levier MTS-102** (ON-ON, 6 A, fixation M6 par écrou) — remplace le SS12D00 (0,5 A, trop faible) | **MTS-102** (lot de 5) | corps 13 × 8 × 10 mm, filetage M6 | 1 lot | 0,96 € | [lien](https://fr.aliexpress.com/item/32840360301.html) |
-| 16 | **Module buzzer PASSIF** MH-FMD (3 broches GND / I/O / VCC, transistor intégré, 3,3–5 V) | **Passif** (⚠️ pas « Actif ») | PCB ≈ 32,5 × 13,5 mm, buzzer Ø 12 mm | 1 | 1,21 € | [lien](https://fr.aliexpress.com/item/1005007287329656.html) |
-
-## 3. AliExpress — outillage et consommables (réutilisables)
-
-| # | Pièce | Option à choisir | Prix | Lien |
-|---|---|---|---|---|
-| 12 | Kit fer à souder 80 W réglable, écran LCD — **avec fil à souder**, tresse, pompe, pinces, support | **220V EU PLUG** + **936R SET5** (⚠️ SET1 = fer seul, sans étain) | 12,19 € | [lien](https://fr.aliexpress.com/item/1005007010264876.html) |
-| 13 | Kit vis + écrous M2 à M5 | 320 pièces | 3,59 € | [lien](https://fr.aliexpress.com/item/1005010552853863.html) |
-| 14 | Câbles Dupont 40 broches | **20 cm**, Femelle-Femelle + Mâle-Femelle | ≈ 2 € | [lien](https://fr.aliexpress.com/item/1005004631908016.html) |
-| 15 | Adhésif double face extra-fort (fixe les petites cartes dans leurs baies) | — | 2,09 € | [lien](https://fr.aliexpress.com/item/1005007168731397.html) |
+> Pourquoi plus AliExpress : depuis le 1er juillet 2026, l'UE prélève 3 € de droits par catégorie d'article et par colis
+> venant de Chine. Avec ~16 petits colis, les frais d'import montaient à 85 €.
 
 ---
 
-> **Mise à jour du 24/10** :
-> - **Interrupteur MTS-102 à la place du SS12D00** : le petit interrupteur à glissière est donné pour 0,5 A, alors que le robot tire environ 0,8 A en roulant (jusqu'à 3 A moteurs bloqués). Le MTS-102 tient 6 A.
-> - **MT3608 à la place du TPS61023** : la doc officielle de la Nano R4 ne prévoit pas de l'alimenter par sa broche 5V, on passe donc par VIN (6–21 V) en 7,5 V. ⚠️ Régler le MT3608 à 7,5 V au voltmètre **avant** de le brancher.
-> - **Module buzzer passif ajouté** : passif = on choisit la fréquence de chaque note (petits « pouip » mignons) ; un buzzer actif ne fait qu'un seul bip strident. Les petits buzzers passifs vendus seuls sont magnétiques (42 Ω, trop gourmands pour une broche) : le **module** a son transistor intégré, il se branche directement.
+## 1. Composants (indispensables)
 
-## Ce qui change par rapport au design v0
-- **Roues imprimées en 3D** avec un joint torique comme pneu (pas de roues N20 fiables sur AliExpress) → le design colle exactement.
-- **Moteurs** de 26 mm au lieu de 24, **bille folle** de 15 mm au lieu de 10,2, **capteurs anti-chute** plus grands (32 × 14) → j'adapte la CAO (v1).
-- Moteurs sans fils : 2 soudures par moteur.
+| # | Pièce | Produit | Dimensions (CAO) | Prix | Lien |
+|---|---|---|---|---|---|
+| 1 | Carte | Arduino Nano R4 **with Headers** (ABX00143), officielle | 45 × 18 mm | 16,50 € | [lien](https://www.amazon.fr/dp/B0FH5Q9YND) |
+| 2 | Écran (yeux) | OLED 1,3″ blanc I2C SH1106, lot de 2 (Binghe) | PCB 35,5 × 33,7 mm | 11,99 € | [lien](https://www.amazon.fr/dp/B0DFCHBQQB) |
+| 3 | 2 moteurs | GA12-N20 réducteur métal, **fils déjà soudés**, lot de 2 | corps 24 × 12 × 10 mm, axe D 3 × 10 mm | 11,49 € | [lien](https://www.amazon.fr/dp/B0DPKYCZ97) |
+| 4 | Pneus | Joints toriques **25 × 2,5 mm** NBR, lot de 10 (4 utilisés) | Ø int. 25, section 2,5 | 7,24 € | [lien](https://www.amazon.fr/dp/B0CTFS36XB) |
+| 5 | Driver moteurs | DRV8833, lot de 6 (JZK) | 18,5 × 16 mm | 7,79 € | [lien](https://www.amazon.fr/dp/B0GSVX832J) |
+| 6 | Capteur caresse | TTP223, lot de 10 (JZK) | 15 × 11 mm | 6,29 € | [lien](https://www.amazon.fr/dp/B09VPK9N7F) |
+| 7 | Batterie | LiPo 3,7 V 1000 mAh 803040 **5C** avec protection PCM (Liter Energy), sans connecteur | 42 × 30 × 8 mm | 12,54 € | [lien](https://www.amazon.fr/dp/B0DQ4CQZ9M) |
+| 8 | Recharge USB-C | TP4056 USB-C double protection, lot de 6 (Aideepen) | ≈ 28 × 17 mm | 6,99 € | [lien](https://www.amazon.fr/dp/B0BZSB3SBN) |
+| 9 | Régulateur 7,5 V | MT3608, lot de 5 | 37 × 17 × 7 mm | 10,95 € | [lien](https://www.amazon.fr/dp/B07G4KWV6S) |
+| 10 | Buzzer | Module buzzer **passif** déclenchement niveau bas, lot de 5 | 38 × 13 × 10 mm | 7,99 € | [lien](https://www.amazon.fr/dp/B096ZWCG7F) |
+| 11 | Interrupteur | MTS-102 à levier 6 A, lot de 10 | M6, corps 13 × 8 × 10 mm | 6,99 € | [lien](https://www.amazon.fr/dp/B00VJA8LMO) |
+| — | Capteurs anti-chute | **2 × TCRT5000 récupérés du kit voiture** (voir encadré) | jusqu'à 35 × 16 mm acceptés | 0 € | — |
+| — | 3e point d'appui | **patin imprimé en 3D** (remplace la bille folle) | Ø 16 × 5 mm | 0 € | — |
+| | | | | **118,76 €** | |
+
+## 2. Outils et consommables (à emprunter si possible)
+
+| # | Pièce | Produit | Prix | Lien |
+|---|---|---|---|---|
+| 12 | Fer à souder | Kit 80 W réglable, écran LCD, 15 en 1 (étain, pompe, pannes, support, dénudeur, gaines) | 18,59 € | [lien](https://www.amazon.fr/dp/B0GF1ND4WY) |
+| 13 | Vis | Vis M2 tête cylindrique **M2 × 4/6/8/10/12/16/20 + écrous + rondelles**, 1260 pièces | 9,59 € | [lien](https://www.amazon.fr/dp/B0H6B315JC) |
+| 14 | Fixation des cartes | Pastilles adhésives mousse double face 9 × 12 × 2 mm, 330 pièces | 7,29 € | [lien](https://www.amazon.fr/dp/B0GCMLRDWD) |
+| 15 | Câbles (seulement si le kit voiture en a moins de 10 femelle-femelle) | ELEGOO 120 câbles Dupont 20 cm | 8,99 € | [lien](https://www.amazon.fr/dp/B01JD5WCG2) |
+
+## Total
+| Cas | Total |
+|---|---|
+| Composants seuls (outils empruntés, câbles du kit) | **119 €** |
+| Composants + vis + pastilles (fer emprunté) | **136 €** |
+| Tout acheté (fer compris) | **154 €** (163 € avec les câbles) |
+
+### Pour baisser encore
+- **Fer à souder** : un fablab d'école ou un ami → −18,59 €.
+- **Élastiques à la place des joints toriques** : −7,24 € (moins durable, mais ça roule).
+
+---
+
+## ⚠️ Les capteurs TCRT5000 du kit voiture
+Le TCRT5000 ressemble à **deux petites LED côte à côte** (une transparente/bleue qui émet, une noire qui reçoit) : c'est normal.
+- ✅ **Bon** : ce composant est soudé sur une **petite carte** avec un **potentiomètre** (cube bleu avec une vis) et **3 ou 4 broches**
+  (VCC, GND, DO, parfois AO). Taille maximale acceptée par le design : **35 × 16 mm** (mesure à la règle).
+- ❌ **Pas bon** : le composant seul, avec ses 4 pattes, sans carte → prendre le lot Amazon
+  [5 modules TCRT5000, 11,99 €](https://www.amazon.fr/dp/B0B2PHWQH2) (32 × 14 mm).
+- Au montage, l'**œil** (les deux « LED ») va du **côté extérieur**, au-dessus de la fenêtre du plancher.
 
 ## À savoir
-- **Dimensions « non publiées »** (DRV8833, TP4056) : le vendeur ne les donne pas. Ces cartes vont dans des baies internes larges ; tu les mesureras à réception et j'ajusterai.
-- **Écran** : l'ordre des broches est VDD-GND-SCK-SDA (VDD en premier), attention au câblage.
-- **Recharge** : port USB-C du TP4056 à l'arrière. LED rouge = en charge, bleue/verte = chargé.
-- **Batterie LiPo** : première charge sous surveillance.
-- **USB + batterie en même temps** : la Nano R4 a un circuit qui choisit automatiquement entre VIN et l'USB-C (doc officielle), tu peux donc la programmer robot allumé.
+- **Écran** : vérifier l'ordre des broches imprimé sur la carte (VCC/GND peuvent être inversés selon les modèles).
+- **Batterie** : choisie en **5C** (5 A max) car les moteurs bloqués tirent jusqu'à ~2 A ; une batterie « 1C » (1 A) aurait coupé. Le TP4056 « double protection » protège la batterie (surcharge, décharge profonde, court-circuit). Première charge sous surveillance.
+- **Recharge** : port USB-C du TP4056 à l'arrière (LED rouge = en charge, verte = chargé).

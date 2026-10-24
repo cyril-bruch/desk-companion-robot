@@ -5,7 +5,7 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 
 ---
 
-## 0. Vérification complète du 24/10 (avant impression)
+## 0. Vérification complète du 24/10 (avant impression, pièces Amazon)
 
 ### Électrique
 | Point vérifié | Valeur | Limite / référence | OK |
@@ -18,7 +18,7 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 | Entrées logiques DRV8833 | 5 V | max 7 V | ✅ |
 | Écran OLED, capteurs, buzzer | 5 V (sortie 5V de la Nano), ≈ 150 mA | — | ✅ |
 | Broches de la Nano | ≤ 8 mA par broche | 8 mA (datasheet) | ✅ le buzzer passe par le transistor de son module |
-| Courant batterie | ≈ 0,8 A en roulant, ≈ 0,25 A à l'arrêt | batterie 1 A continu / 3 A max ; TP4056 protégé ≈ 3 A | ✅ |
+| Courant batterie | ≈ 0,8 A en roulant, ≈ 0,25 A à l'arrêt | batterie **5C = 5 A** max (moteurs bloqués ≈ 2 A) ; TP4056 protégé ≈ 3 A | ✅ |
 | Interrupteur | ≈ 0,8 A (pics 3 A) | **MTS-102 : 6 A** (l'ancien SS12D00 : 0,5 A ❌ remplacé) | ✅ |
 | Recharge | 1 A (TP4056) | batterie 0,5–1 C | ✅ |
 | Mesure batterie sur A0 | 3,0–4,2 V | < 5 V | ✅ |
@@ -29,14 +29,14 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 |---|---|---|
 | Collisions pièces imprimées ↔ pièces achetées ↔ entre elles | aucune (la seule « collision » est le capot qui serre le moteur de 0,2 mm, voulu) | ✅ |
 | Zones des connecteurs Dupont (Nano, écran, caresse, buzzer) | libres | ✅ |
-| Cosses des moteurs (à l'arrière de chaque moteur) | 10 mm entre les deux moteurs (avant : 4 mm ❌ → coque élargie à 92 mm) | ✅ |
+| Cosses des moteurs (à l'arrière de chaque moteur) | 14 mm entre les deux moteurs (moteurs Amazon de 24 mm) | ✅ |
 | Colonnes de vis de la coque | reliées à la paroi (avant : flottantes ❌ corrigé) | ✅ |
-| Pneus : joint torique OD30 × 2,4 sur gorge Ø26 | étirement 3 % (idéal 2–5 %), dépasse de 0,9 mm du flasque, roue ≈ Ø 30,7 | ✅ |
+| Pneus : joint torique 25 × 2,5 sur gorge Ø26 (largeur 2,8) | étirement 4 % (idéal 2–5 %), dépasse d'≈ 1 mm du flasque, roue ≈ Ø 30,9 | ✅ |
 | Axe en D du moteur dans la roue | Ø 3,2 / méplat à 1,1 mm pour un axe Ø 3 / 2,5 → serré, 7,5 mm d'engagement | ✅ |
-| Hauteur de la bille folle (15 mm) vs axe des roues (15,3 mm) | robot quasi à plat | ✅ |
+| Patin arrière imprimé vs roues | bas du patin et bas des pneus tous les deux à 0 mm : robot à plat | ✅ |
 | Capteurs anti-chute | œil à ~10 mm du sol (plage 1–25 mm) | ✅ |
 | Ports USB-C (Nano et charge) | à 0,6–0,9 mm derrière leurs ouvertures | ✅ |
-| Passage pour glisser la batterie | 13,7 mm pour 11 mm nécessaires | ✅ |
+| Passage pour glisser la batterie | 13,7 mm pour 11,5 mm nécessaires (cadre prévu pour 42 × 30 × 8,5 mm) | ✅ |
 | Tout tient sur la Dreamer (230 × 150 × 140 mm) | plus grande pièce 92 × 92 × 79 mm | ✅ |
 | Fichiers d'impression | 1 seul volume fermé par pièce (« étanche ») | ✅ |
 
@@ -46,11 +46,11 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 
 | Niveau | Hauteur | Ce qu'il y a |
 |---|---|---|
-| **Sous le plancher** | 0–5 mm | bille folle (arrière), fenêtres des capteurs anti-chute (avant) |
+| **Sous le plancher** | 0–5 mm | patin arrière imprimé (2 vis M2), fenêtres des capteurs anti-chute (avant) |
 | **Plancher** | 7 mm | moteurs + capots (milieu) · chargeur USB-C (arrière gauche) · driver moteurs (arrière droit) |
 | **Étagères avant** | 19–21 mm | **dessous** : 2 capteurs anti-chute, œil vers le sol · **dessus** : régulateur MT3608 |
 | **Étagère batterie** | 19,5 mm | batterie 1000 mAh (arrière) |
-| **Plateau Nano** | 35 mm | Arduino Nano R4 **à l'envers (broches vers le haut)**, USB-C juste derrière l'ouverture arrière · module buzzer à l'avant du plateau |
+| **Plateau Nano** | 35 mm | Arduino Nano R4 **à l'envers (broches vers le haut)**, USB-C juste derrière l'ouverture arrière · module buzzer (38 × 13 mm) à l'avant du plateau |
 | **Paroi arrière, en haut à droite** | 47 mm | interrupteur à levier MTS-102 (écrou M6) |
 | **Coque, face avant** | 37–72 mm | façade noire + écran OLED glissé dans ses guides |
 | **Coque, dessus** | ~78 mm | capteur de caresse collé dans sa cage sous le creux |
@@ -81,7 +81,7 @@ Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chut
 
 | Composant | Broche composant | → | Nano R4 | Comment le brancher |
 |---|---|---|---|---|
-| Écran OLED | VDD / GND / SCK / SDA | → | 5V / GND / **A5** / **A4** | Dupont. ⚠️ VDD en premier |
+| Écran OLED | VCC / GND / SCL / SDA | → | 5V / GND / **A5** / **A4** | Dupont. ⚠️ lire l'ordre imprimé sur la carte |
 | Driver DRV8833 | IN1 / IN2 | → | **D5** / **D6** | moteur gauche — **fils soudés** sur le driver |
 | | IN3 / IN4 | → | **D9** / **D10** | moteur droit |
 | | VCC / GND | → | 7,5 V / GND | |
@@ -115,7 +115,7 @@ dans la coque, donc étouffé. Côté Simulink : un petit bloc personnalisé, m�
 |---|---|---|
 | Coque ↔ plancher | 4 trous Ø 2,2 avec logement de tête sous le plancher → 4 colonnes dans la coque (avant-trou Ø 1,7) | 4 × M2 × 8 à 10 |
 | Capots ↔ berceaux moteurs | 2 avant-trous Ø 1,6 par berceau | 8 × M2 × 6 |
-| Bille folle ↔ chapeau arrière | croix de fentes de 2,4 mm (s'adapte à l'écartement de la bille) | 2 × M2 + écrous |
+| Patin arrière ↔ plancher | 2 trous Ø 2,4 | 2 × M2 × 6 + écrous |
 | Interrupteur ↔ coque | trou Ø 6,5 | écrou fourni avec l'interrupteur |
 
 Les vis M2 se vissent directement dans le plastique. Si un trou sort trop fin, foret de 1,5 mm à la main.
@@ -141,7 +141,7 @@ moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran.
 3. **Roues** : 2 joints toriques par roue, puis emmancher sur l'axe des moteurs.
 4. **Plancher** (coque retirée) :
    - moteurs dans leurs berceaux, cosses vers le centre, **capots** vissés ;
-   - **bille folle** vissée sous le chapeau arrière ;
+   - **patin arrière** vissé sous le plancher (2 × M2 × 6 + écrous) ;
    - **chargeur** collé (glissé par la gauche, USB-C contre l'ouverture), **driver** collé (arrière droit) ;
    - **capteurs anti-chute** collés sous les étagères avant (œil au-dessus des fenêtres), **MT3608** collé dessus.
 5. **Batterie** : souder sur B+/B-, la poser dans son cadre (elle passe en l'inclinant).
@@ -156,5 +156,4 @@ moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran.
 
 ## 7. Points encore ouverts (à vérifier à réception, sans impact sur l'impression)
 - Cotes non publiées (chargeur, driver, MT3608, module buzzer) : emplacements larges + double face.
-- Si la bille folle ne fait pas exactement 15 mm : caler avec des rondelles M2.
-- Longueurs exactes des vis du kit : il faut des M2 de 6 et 8–10 mm.
+- Capteurs TCRT5000 du kit voiture : carte de 35 × 16 mm maximum, œil côté extérieur (voir `bom.md`).

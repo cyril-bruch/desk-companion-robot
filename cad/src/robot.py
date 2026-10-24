@@ -26,30 +26,32 @@ Z_TOP = Z0 + H
 IN_X, IN_Y = W / 2 - WALL, D / 2 - WALL      # inner wall faces
 
 # --- parts (published dimensions unless noted)
-MOTOR_L, MOTOR_W, MOTOR_H = 26.0, 12.0, 10.0  # N20, body length incl. gearbox
+MOTOR_L, MOTOR_W, MOTOR_H = 24.0, 12.0, 10.0  # N20 (Amazon B0DPKYCZ97): body 24 x 12 x 10 incl. gearbox
 SHAFT_L = 10.0
-TIRE_D = 30.6                      # printed rim (groove Ø26) + O-ring OD30 CS2.4
-RIM_D, FLANGE_D, WHEEL_W = 26.0, 29.0, 8.0
+TIRE_D = 30.9                      # printed rim (groove Ø26) + O-ring 25 x 2.5 (4 % stretch)
+RIM_D, FLANGE_D, WHEEL_W = 26.0, 29.0, 8.4
+GROOVE_W, GROOVES = 2.8, (0.9, 4.7)  # two O-ring grooves (x from the inner face)
 OLED = (35.5, 33.5, 4.3)           # W, H, total thickness (PCB 1.6)
 OLED_ACTIVE = (29.4, 14.7)
 NANO = (18.0, 45.0, 1.6)
 NANO_PAD = 4.0                     # Nano is flipped: clearance for its components (USB-C 3.2 mm)
-BATT = (40.0, 30.0, 8.0)           # 803040
+BATT = (42.0, 30.0, 8.5)           # 803040 (40-42 x 30 x 8 depending on the brand: bay sized for 42)
 TP4056 = (17.0, 28.0, 6.0)         # not published -> typical, bay oversized
-DRV = (16.0, 18.5, 8.0)            # not published -> typical
+DRV = (18.5, 18.5, 8.0)            # JZK DRV8833: 18.5 x 16 (published) -> square bay, either orientation
 MT3608 = (37.0, 17.5, 12.5)        # boost 7.5 V: L x W x height incl. blue trimmer (typical, oversized)
-BUZZER = (32.5, 13.5, 12.0, 9.5)   # MH-FMD passive buzzer module: PCB L x W, buzzer dia, buzzer height
+BUZZER = (38.0, 13.0, 12.0, 10.0)  # passive buzzer module (Amazon B096ZWCG7F): 38 x 13 x 10, buzzer dia/height
 BUZZER_XY = (0.0, 13.0)            # on the front extension of the Nano deck
 TCRT = (32.0, 14.0, 10.0)          # module L x W, height with components
 TTP = (15.0, 11.0, 1.6)
-CASTER_H, CASTER_FOOT = 15.0, 20.0 # published height; footprint not published
+SKID_FLANGE, SKID_DOME, SKID_H = 24.0, 16.0, 3.5  # printed rear skid (replaces the ball caster)
 TOGGLE = (13.0, 8.0, 10.0, 6.0)    # MTS-102: body W x H x depth, + terminals; M6 (1/4") bushing
 TOGGLE_XZ = (22.0, 47.0)          # position on the rear wall
 
 # --- layout
 AXLE_Y = 6.0                       # wheels slightly in front of the centre
 AXLE_Z = TIRE_D / 2
-MOTOR_X0, MOTOR_X1 = 5.0, 5.0 + MOTOR_L          # 5 .. 31 (10 mm between the motor backs for terminals + wires)
+MOTOR_X1 = 31.0
+MOTOR_X0 = MOTOR_X1 - MOTOR_L                     # 7 .. 31 (14 mm between the motor backs for terminals + wires)
 WHEEL_X0, WHEEL_X1 = MOTOR_X1 + 2.5, MOTOR_X1 + 2.5 + WHEEL_W   # 33.5 .. 41.5 (body side at 46)
 FENDER_X = MOTOR_X1 + 0.4                         # fender wall inner face
 WELL_HY = TIRE_D / 2 + 3.0                        # wheel-well half length
@@ -91,7 +93,7 @@ def front_xz(w, h, r, cz, depth, y_from):
             .edges("|Y").fillet(r).translate((0, y_from, 0)))
 
 
-CLIFF_X = (1.3, 33.3)              # each cliff module spans x = 1.3..33.3 (mirrored)
+CLIFF_X = (1.3, 33.3)              # module 32 x 14 (Amazon) ; hanger accepts up to 35 x 16 (kit modules)
 CLIFF_Y = (26.0, 40.0)
 
 
@@ -158,8 +160,8 @@ def make_faceplate():
 # ============================================================== wheel (print 4: 2 + 2 spares)
 def make_wheel():
     w = cq.Workplane("YZ").circle(FLANGE_D / 2).extrude(WHEEL_W)
-    for x0 in (1.0, 4.4):                               # two O-ring grooves, 2.6 wide
-        groove = (cq.Workplane("YZ").circle(FLANGE_D / 2 + 1).circle(RIM_D / 2).extrude(2.6)
+    for x0 in GROOVES:                                  # two O-ring grooves
+        groove = (cq.Workplane("YZ").circle(FLANGE_D / 2 + 1).circle(RIM_D / 2).extrude(GROOVE_W)
                   .translate((x0, 0, 0)))
         w = w.cut(groove)
     # D-shaft bore 3.2 / flat at 1.1 mm from the axis (N20: 3 mm, flat 2.5) - press fit
@@ -184,6 +186,20 @@ def make_motor_cap():
         for dy in (-CAP_HOLE_DY, CAP_HOLE_DY):
             cap = cap.cut(cq.Workplane("XY").circle(1.2).extrude(4).translate((x, dy, -1)))
     return cap   # local frame: right motor, y centred on the axle, z = 0 at the cradle tops
+
+
+# ============================================================== rear skid (print 2: 1 + 1 spare)
+def make_skid():
+    """Flange screwed under the floor + smooth dome that slides on the desk.
+    Local frame: flange top at z = 0, dome pointing down to z = -(1.5 + SKID_H)."""
+    r = ((SKID_DOME / 2) ** 2 + SKID_H ** 2) / (2 * SKID_H)          # sphere radius of the cap
+    flange = box(SKID_FLANGE, 18, 1.5, 0, 0, -1.5).edges("|Z").fillet(8.9)
+    cap = (cq.Workplane("XY").sphere(r).translate((0, 0, -1.5 - SKID_H + r))
+           .intersect(box(40, 40, SKID_H, 0, 0, -1.5 - SKID_H)))
+    skid = flange.union(cap)
+    for dx in (-10.0, 10.0):
+        skid = skid.cut(cq.Workplane("XY").circle(1.2).extrude(4).translate((dx, 0, -3)))
+    return skid
 
 
 # ============================================================== chassis
@@ -212,32 +228,26 @@ def make_chassis():
         # cliff sensor hanger: plate under which the TCRT5000 module is taped (components down)
         x0, x1 = CLIFF_X
         cx = sx * (x0 + x1) / 2
-        px0, px1 = x0 - 1.0, x1 + 0.3
-        plate = box(px1 - px0, CLIFF_Y[1] - CLIFF_Y[0] + 5, 1.8, sx * (px0 + px1) / 2, sum(CLIFF_Y) / 2, CLIFF_SHELF_Z)
+        px0, px1 = x0 - 1.0, 35.5
+        plate = box(px1 - px0, CLIFF_Y[1] - CLIFF_Y[0] + 7, 1.8, sx * (px0 + px1) / 2, sum(CLIFF_Y) / 2, CLIFF_SHELF_Z)
         c = c.union(plate)
-        for (px, py) in ((9.5, CLIFF_Y[0] - 1.5), (25.0, CLIFF_Y[0] - 1.5), (9.5, CLIFF_Y[1] + 1.5), (25.0, CLIFF_Y[1] + 1.5)):
+        for (px, py) in ((9.5, CLIFF_Y[0] - 2.5), (25.0, CLIFF_Y[0] - 2.5), (9.5, CLIFF_Y[1] + 2.5), (25.0, CLIFF_Y[1] + 2.5)):
             c = c.union(box(3, 3, CLIFF_SHELF_Z - SPLIT_Z, sx * px, py, SPLIT_Z))
         # light window under the sensor end (outer end), oversized
-        c = c.cut(box(14, 16, 10, sx * (x1 - 6), sum(CLIFF_Y) / 2, Z0 - 1))
+        c = c.cut(box(18, 17, 10, sx * 26.0, sum(CLIFF_Y) / 2, Z0 - 1))           # sensor end anywhere in x 17..35
 
-    # caster "hat" (rear centre): mounting face at CASTER_H above ground
-    hat_in = CASTER_FOOT + 2
-    c = c.cut(box(hat_in, hat_in, FLOOR + 2, 0, CASTER_Y, Z0 - 1))
-    hat = box(hat_in + 2.4, hat_in + 2.4, CASTER_H + 2 - Z0, 0, CASTER_Y, Z0)
-    hat = hat.cut(box(hat_in, hat_in, CASTER_H - Z0 + 0.01, 0, CASTER_Y, Z0 - 0.01))
-    for ang in (0, 90):                                 # cross of M2 slots: fits most hole spacings
-        slot = box(16, 2.4, 6, 0, 0, CASTER_H - 1).rotate((0, 0, 0), (0, 0, 1), ang).translate((0, CASTER_Y, 0))
-        hat = hat.cut(slot)
-    c = c.union(hat)
+    # rear skid (printed, screwed under the floor with 2 x M2 + nuts)
+    for dx in (-10.0, 10.0):
+        c = c.cut(cq.Workplane("XY").circle(1.2).extrude(FLOOR + 2).translate((dx, CASTER_Y, Z0 - 1)))
 
     # floor-level bays (boards taped inside)
     # charger: L-shaped stop (front + inner side), USB-C end free toward the rear opening
     CH_X, CH_Y0 = -21.2, -IN_Y + 0.9                  # board centre x, rear edge y (port close to the wall)
     c = c.union(box(TP4056[0] + 2, 1.2, 3, CH_X, CH_Y0 + TP4056[1] + TOL + 0.6, SPLIT_Z))
     c = c.union(box(1.2, TP4056[1] * 0.6, 3, CH_X + TP4056[0] / 2 + TOL + 0.6, CH_Y0 + TP4056[1] * 0.7, SPLIT_Z))
-    c = c.union(bay(DRV[0] + 2, DRV[1] + 2, 3, 21.0, -21.6, SPLIT_Z))
+    c = c.union(bay(DRV[0] + 2, DRV[1] + 2, 3, 21.0, -24.0, SPLIT_Z))
 
-    # battery shelf (above the caster hat), 3 posts + cantilever over the charger
+    # battery shelf, 3 posts + cantilever over the charger
     shelf_y0, shelf_y1 = -IN_Y + 0.8, -3.5
     c = c.union(box(46, shelf_y1 - shelf_y0, 1.8, 0, (shelf_y0 + shelf_y1) / 2, BATT_SHELF_Z - 1.8))
     c = c.union(bay(BATT[0] + 1.5, BATT[1] + 1.5, 3, 0, (shelf_y0 + shelf_y1) / 2, BATT_SHELF_Z))
@@ -247,7 +257,7 @@ def make_chassis():
     # Nano deck (posts on the battery shelf + 2 front posts on the floor).
     # Nano: USB-C 0.6 mm from the rear wall, right behind the rear opening (cable plugs in from outside).
     deck_y0, deck_y1 = -IN_Y + 0.8, 22.0
-    c = c.union(box(38, deck_y1 - deck_y0, 1.8, 0, (deck_y0 + deck_y1) / 2, DECK_Z - 1.8))
+    c = c.union(box(46, deck_y1 - deck_y0, 1.8, 0, (deck_y0 + deck_y1) / 2, DECK_Z - 1.8))
     # Nano mounted UPSIDE DOWN (header pins up, Dupont plugs from above), resting on 4 corner
     # pads that touch only the pin-free ends of the board; USB-C hangs below, at the opening.
     ny0, ny1 = -IN_Y + 0.6, -IN_Y + 0.6 + NANO[1]
@@ -266,7 +276,7 @@ def make_chassis():
     c = c.union(bay(BUZZER[0] + 2.5, BUZZER[1] + 2.5, 2, bx, by, DECK_Z))
 
     # wire passages
-    for (hx, hy) in ((0, -1), (-12, 12), (12, 12)):
+    for (hx, hy) in ((0, -1), (0, 15)):
         c = c.cut(cq.Workplane("XY").circle(3).extrude(5).translate((hx, hy, Z0 - 1)))
     c = c.cut(box(8, 5, 4, 0, -6, BATT_SHELF_Z - 2.5))
     c = c.cut(box(8, 5, 4, 0, 0.5, DECK_Z - 2.5))
@@ -293,9 +303,9 @@ def make_parts():
         mot = u(mot, box(MOTOR_L, MOTOR_W, MOTOR_H, sx * (MOTOR_X0 + MOTOR_L / 2), AXLE_Y, AXLE_Z - MOTOR_H / 2))
         mot = mot.union(cq.Workplane("YZ").circle(1.5).extrude(SHAFT_L)
                         .translate((MOTOR_X1 if sx > 0 else -MOTOR_X1 - SHAFT_L, AXLE_Y, AXLE_Z)))
-        for x0 in (1.0, 4.4):
-            xs = (WHEEL_X0 + x0) if sx > 0 else -(WHEEL_X0 + x0 + 2.6)
-            tires = u(tires, cq.Workplane("YZ").circle(TIRE_D / 2).circle(RIM_D / 2).extrude(2.6)
+        for x0 in GROOVES:
+            xs = (WHEEL_X0 + x0) if sx > 0 else -(WHEEL_X0 + x0 + GROOVE_W)
+            tires = u(tires, cq.Workplane("YZ").circle(TIRE_D / 2).circle(RIM_D / 2).extrude(GROOVE_W)
                       .translate((xs, AXLE_Y, AXLE_Z)))
     p["motors"] = (mot, (0.72, 0.72, 0.76))
     p["tires"] = (tires, (0.12, 0.12, 0.14))
@@ -310,7 +320,7 @@ def make_parts():
     p["nano"] = (nano, (0.0, 0.55, 0.6))
     p["charger"] = (box(TP4056[0], TP4056[1], 1.6, -21.2, -IN_Y + 0.9 + TP4056[1] / 2, SPLIT_Z + 0.2)
                     .union(box(9, 7.5, 3.2, -21.2, -IN_Y + 0.9 + 3.75, SPLIT_Z + 1.8)), (0.15, 0.3, 0.75))
-    p["driver"] = (box(DRV[0], DRV[1], 1.6, 21.0, -21.6, SPLIT_Z + 0.2), (0.12, 0.12, 0.14))
+    p["driver"] = (box(18.5, 16.0, 1.6, 21.0, -24.0, SPLIT_Z + 0.2), (0.12, 0.12, 0.14))
     # MT3608 taped on top of the two front sensor plates (spans both)
     mt = box(MT3608[0], MT3608[1], 1.6, 0, 33.0, CLIFF_SHELF_Z + 1.8 + 0.2)
     mt = mt.union(box(9.5, 4.5, MT3608[2] - 1.6, -9, 33.0 + 4, CLIFF_SHELF_Z + 1.8 + 1.8))   # trimmer
@@ -332,8 +342,6 @@ def make_parts():
         cliff = u(cliff, pcb.union(eye))
     p["cliff_sensors"] = (cliff, (0.1, 0.45, 0.2))
     p["touch"] = (box(*TTP, 0, -2, Z_TOP - WALL - 1.4 - TTP[2] - 0.3), (0.75, 0.15, 0.15))
-    p["caster"] = (box(CASTER_FOOT, CASTER_FOOT, CASTER_H - 9, 0, CASTER_Y, 9)
-                   .union(cq.Workplane("XY").sphere(6).translate((0, CASTER_Y, 6))), (0.55, 0.55, 0.6))
 
     y_pcb_front = IN_Y - 1.2 - (OLED[2] - 1.6) - 0.3
     p["oled_pcb"] = (front_xz(OLED[0], OLED[1], 0.5, SCREEN_Z, 1.6, y_pcb_front), (0.1, 0.25, 0.6))
@@ -350,6 +358,7 @@ def make_parts():
 def build():
     shell, chassis, face, wheel = make_shell(), make_chassis(), make_faceplate(), make_wheel()
     cap = make_motor_cap()
+    skid = make_skid()
     parts = make_parts()
     (OUT / "preview").mkdir(exist_ok=True)
 
@@ -365,6 +374,7 @@ def build():
         "3_facade_x2": on_bed(face.rotate((0, 0, 0), (1, 0, 0), 90)),           # front face down
         "4_roue_x4": on_bed(wheel.rotate((0, 0, 0), (0, 1, 0), -90)),           # axis vertical
         "5_capot_moteur_x3": on_bed(cap.rotate((0, 0, 0), (1, 0, 0), 180)),     # flat face down
+        "6_patin_arriere_x2": on_bed(skid.rotate((0, 0, 0), (1, 0, 0), 180)),   # flange down, dome up
     }
     for name, solid in printable.items():
         cq.exporters.export(solid, str(pr / f"{name}.stl"), tolerance=0.03, angularTolerance=0.08)
@@ -388,7 +398,8 @@ def build():
             "PLATEAU_1_coque": [place(meshes["1_coque"], 0, 0)],
             "PLATEAU_2_chassis_roues_capots": [place(meshes["2_chassis"], -45, 10)]
                 + [place(meshes["4_roue_x4"], 30 + 34 * (i % 2), 40 - 34 * (i // 2)) for i in range(4)]
-                + [place(meshes["5_capot_moteur_x3"], 22 + 26 * i, -50) for i in range(3)],
+                + [place(meshes["5_capot_moteur_x3"], 22 + 26 * i, -50) for i in range(3)]
+                + [place(meshes["6_patin_arriere_x2"], 100, 40 - 34 * i) for i in range(2)],
             "PLATEAU_3_facades_noir": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
         }
         for name, pieces in plates.items():
@@ -410,6 +421,7 @@ def build():
     for sx in (-1, 1):
         cl = cap.translate((0, AXLE_Y, CAP_Z)) if sx > 0 else cap.mirror("YZ").translate((0, AXLE_Y, CAP_Z))
         assy.add(cl, name=f"motor_cap_{'r' if sx > 0 else 'l'}", color=cq.Color(0.98, 0.72, 0.68))
+    assy.add(skid.translate((0, CASTER_Y, Z0)), name="skid", color=cq.Color(0.98, 0.72, 0.68))
     for n, (s, col) in parts.items():
         assy.add(s, name=n, color=cq.Color(*col))
     assy.save(str(OUT / "preview" / "robot.glb"))
