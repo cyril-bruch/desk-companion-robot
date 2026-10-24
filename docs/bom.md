@@ -23,25 +23,25 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 | 9 | Régulateur 7,5 V | MT3608, lot de 5 | 37 × 17 × 7 mm | 10,95 € | [lien](https://www.amazon.fr/dp/B07G4KWV6S) |
 | 10 | Buzzer | Module buzzer **passif** déclenchement niveau bas, lot de 5 | 38 × 13 × 10 mm | 7,99 € | [lien](https://www.amazon.fr/dp/B096ZWCG7F) |
 | 11 | Interrupteur | MTS-102 à levier 6 A, lot de 10 | M6, corps 13 × 8 × 10 mm | 6,99 € | [lien](https://www.amazon.fr/dp/B00VJA8LMO) |
-| — | Capteurs anti-chute | **2 × TCRT5000 récupérés du kit voiture** (voir encadré) | jusqu'à 35 × 16 mm acceptés | 0 € | — |
+| 12 | Capteurs anti-chute | Module TCRT5000 infrarouge avec potentiomètre, lot de 5 (2 utilisés) | 32 × 14 mm (35 × 16 max accepté) | 11,99 € | [lien](https://www.amazon.fr/dp/B0B2PHWQH2) |
 | — | 3e point d'appui | **patin imprimé en 3D** (remplace la bille folle) ; option : pastille de feutre 2 mm collée sous le patin « pour feutre » (plus silencieux) | Ø 16 × 5 mm | 0 € | — |
-| | | | | **118,76 €** | |
+| | | | | **130,75 €** | |
 
 ## 2. Outils et consommables (à emprunter si possible)
 
 | # | Pièce | Produit | Prix | Lien |
 |---|---|---|---|---|
-| 12 | Fer à souder | Kit 80 W réglable, écran LCD, 15 en 1 (étain, pompe, pannes, support, dénudeur, gaines) | 18,59 € | [lien](https://www.amazon.fr/dp/B0GF1ND4WY) |
-| 13 | Vis | Vis M2 tête cylindrique **M2 × 4/6/8/10/12/16/20 + écrous + rondelles**, 1260 pièces | 9,59 € | [lien](https://www.amazon.fr/dp/B0H6B315JC) |
-| 14 | Fixation des cartes | Pastilles adhésives mousse double face 9 × 12 × 2 mm, 330 pièces | 7,29 € | [lien](https://www.amazon.fr/dp/B0GCMLRDWD) |
-| 15 | Câbles (seulement si le kit voiture en a moins de 10 femelle-femelle) | ELEGOO 120 câbles Dupont 20 cm | 8,99 € | [lien](https://www.amazon.fr/dp/B01JD5WCG2) |
+| 13 | Fer à souder | Kit 80 W réglable, écran LCD, 15 en 1 (étain, pompe, pannes, support, dénudeur, gaines) | 18,59 € | [lien](https://www.amazon.fr/dp/B0GF1ND4WY) |
+| 14 | Vis | Vis M2 tête cylindrique **M2 × 4/6/8/10/12/16/20 + écrous + rondelles**, 1260 pièces | 9,59 € | [lien](https://www.amazon.fr/dp/B0H6B315JC) |
+| 15 | Fixation des cartes | Pastilles adhésives mousse double face 9 × 12 × 2 mm, 330 pièces | 7,29 € | [lien](https://www.amazon.fr/dp/B0GCMLRDWD) |
+| 16 | Câbles (seulement si le kit voiture en a moins de 10 femelle-femelle) | ELEGOO 120 câbles Dupont 20 cm | 8,99 € | [lien](https://www.amazon.fr/dp/B01JD5WCG2) |
 
 ## Total
 | Cas | Total |
 |---|---|
-| Composants seuls (outils empruntés, câbles du kit) | **119 €** |
-| Composants + vis + pastilles (fer emprunté) | **136 €** |
-| Tout acheté (fer compris) | **154 €** (163 € avec les câbles) |
+| Composants seuls (outils empruntés, câbles du kit) | **131 €** |
+| Composants + vis + pastilles (fer emprunté) | **148 €** |
+| Tout acheté (fer compris) | **166 €** (175 € avec les câbles) |
 
 ### Pour baisser encore
 - **Fer à souder** : un fablab d'école ou un ami → −18,59 €.
@@ -49,13 +49,11 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 
 ---
 
-## ⚠️ Les capteurs TCRT5000 du kit voiture
-Le TCRT5000 ressemble à **deux petites LED côte à côte** (une transparente/bleue qui émet, une noire qui reçoit) : c'est normal.
-- ✅ **Bon** : ce composant est soudé sur une **petite carte** avec un **potentiomètre** (cube bleu avec une vis) et **3 ou 4 broches**
-  (VCC, GND, DO, parfois AO). Taille maximale acceptée par le design : **35 × 16 mm** (mesure à la règle).
-- ❌ **Pas bon** : le composant seul, avec ses 4 pattes, sans carte → prendre le lot Amazon
-  [5 modules TCRT5000, 11,99 €](https://www.amazon.fr/dp/B0B2PHWQH2) (32 × 14 mm).
+## Les capteurs anti-chute TCRT5000
+Chaque module a **deux petites « LED » côte à côte** (une qui émet l'infrarouge, une qui reçoit) : c'est normal.
 - Au montage, l'**œil** (les deux « LED ») va du **côté extérieur**, au-dessus de la fenêtre du plancher.
+- Le petit potentiomètre bleu règle la sensibilité : à régler au tournevis, robot posé sur le bureau puis au-dessus du vide.
+- Les capteurs du kit voiture ne sont pas ce modèle : on prend le lot Amazon.
 
 ## À savoir
 - **Écran** : vérifier l'ordre des broches imprimé sur la carte (VCC/GND peuvent être inversés selon les modèles).

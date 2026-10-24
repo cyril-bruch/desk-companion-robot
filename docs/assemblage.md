@@ -157,4 +157,4 @@ moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran.
 
 ## 7. Points encore ouverts (à vérifier à réception, sans impact sur l'impression)
 - Cotes non publiées (chargeur, driver, MT3608, module buzzer) : emplacements larges + double face.
-- Capteurs TCRT5000 du kit voiture : carte de 35 × 16 mm maximum, œil côté extérieur (voir `bom.md`).
+- Capteurs TCRT5000 (lot Amazon, 32 × 14 mm) : œil côté extérieur, sensibilité réglée au potentiomètre (voir `bom.md`).
