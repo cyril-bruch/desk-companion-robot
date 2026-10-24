@@ -2,6 +2,8 @@
 
 _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur chaque fiche produit._
 **Une seule commande Amazon, pas de douane, livraison 1 à 3 jours.**
+Astuce frais de port : les articles **« Expédié par Amazon »** sont livrés gratuitement dès 35 € de commande ;
+ceux expédiés par un vendeur tiers ont leurs propres frais. Si un lien affiche des frais, chercher la même référence « Expédié par Amazon ».
 
 > Pourquoi plus AliExpress : depuis le 1er juillet 2026, l'UE prélève 3 € de droits par catégorie d'article et par colis
 > venant de Chine. Avec ~16 petits colis, les frais d'import montaient à 85 €.
@@ -15,7 +17,7 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 | 1 | Carte | Arduino Nano R4 **with Headers** (ABX00143), officielle | 45 × 18 mm | 16,50 € | [lien](https://www.amazon.fr/dp/B0FH5Q9YND) |
 | 2 | Écran (yeux) | OLED 1,3″ blanc I2C SH1106, lot de 2 (Binghe) | PCB 35,5 × 33,7 mm | 11,99 € | [lien](https://www.amazon.fr/dp/B0DFCHBQQB) |
 | 3 | 2 moteurs | GA12-N20 réducteur métal, **fils déjà soudés**, lot de 2 | corps 24 × 12 × 10 mm, axe D 3 × 10 mm | 11,49 € | [lien](https://www.amazon.fr/dp/B0DPKYCZ97) |
-| 4 | Pneus | Joints toriques **25 × 2,5 mm** NBR, lot de 10 (4 utilisés) | Ø int. 25, section 2,5 | 7,24 € | [lien](https://www.amazon.fr/dp/B0CTFS36XB) |
+| 4 | Pneus | Joints toriques **25 × 2,5 mm** NBR 70 (sourcing map), lot de 10 (4 utilisés), **expédié par Amazon** | Ø int. 25, ext. 30, section 2,5 | 8,89 € | [lien](https://www.amazon.fr/dp/B00CFNMEHW) |
 | 5 | Driver moteurs | DRV8833, lot de 6 (JZK) | 18,5 × 16 mm | 7,79 € | [lien](https://www.amazon.fr/dp/B0GSVX832J) |
 | 6 | Capteur caresse | TTP223, lot de 10 (JZK) | 15 × 11 mm | 6,29 € | [lien](https://www.amazon.fr/dp/B09VPK9N7F) |
 | 7 | Batterie | LiPo 3,7 V 1000 mAh 803040 **5C** avec protection PCM (Liter Energy), sans connecteur | 42 × 30 × 8 mm | 12,54 € | [lien](https://www.amazon.fr/dp/B0DQ4CQZ9M) |
@@ -25,7 +27,7 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 | 11 | Interrupteur | MTS-102 à levier 6 A, lot de 10 | M6, corps 13 × 8 × 10 mm | 6,99 € | [lien](https://www.amazon.fr/dp/B00VJA8LMO) |
 | 12 | Capteurs anti-chute | Module TCRT5000 infrarouge avec potentiomètre, lot de 5 (2 utilisés) | 32 × 14 mm (35 × 16 max accepté) | 11,99 € | [lien](https://www.amazon.fr/dp/B0B2PHWQH2) |
 | — | 3e point d'appui | **patin imprimé en 3D** (remplace la bille folle) ; option : pastille de feutre 2 mm collée sous le patin « pour feutre » (plus silencieux) | Ø 16 × 5 mm | 0 € | — |
-| | | | | **130,75 €** | |
+| | | | | **132,40 €** | |
 
 ## 2. Outils et consommables (à emprunter si possible)
 
@@ -39,13 +41,13 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 ## Total
 | Cas | Total |
 |---|---|
-| Composants seuls (outils empruntés, câbles du kit) | **131 €** |
-| Composants + vis + pastilles (fer emprunté) | **148 €** |
-| Tout acheté (fer compris) | **166 €** (175 € avec les câbles) |
+| Composants seuls (outils empruntés, câbles du kit) | **132 €** |
+| Composants + vis + pastilles (fer emprunté) | **149 €** |
+| Tout acheté (fer compris) | **168 €** (177 € avec les câbles) |
 
 ### Pour baisser encore
 - **Fer à souder** : un fablab d'école ou un ami → −18,59 €.
-- **Élastiques à la place des joints toriques** : −7,24 € (moins durable, mais ça roule).
+- **Élastiques à la place des joints toriques** : −8,89 € (moins durable, mais ça roule).
 
 ---
 
