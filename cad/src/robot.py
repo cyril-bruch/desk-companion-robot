@@ -54,9 +54,12 @@ CASTER_Y = -30.0
 SCREEN_Z = Z0 + 50.0
 FACE_W, FACE_H, FACE_R = 40.0, 26.0, 8.0
 BATT_SHELF_Z = 19.5                # top of the battery shelf
-DECK_Z = 33.0                      # top of the Nano deck
+DECK_Z = 35.0                      # top of the Nano deck (room to lift the battery in)
 CLIFF_SHELF_Z = 19.5               # underside of the plates the cliff sensors hang from
 BOSS = [(sx * 37.0, sy * 30.0) for sx in (-1, 1) for sy in (-1, 1)]
+CRADLE_W = MOTOR_W + 8                             # motor cradle width (Y)
+CAP_Z = AXLE_Z + MOTOR_H / 2 + 0.3                 # top of the cradles = underside of the cap
+CAP_HOLE_DY = MOTOR_W / 2 + 2.0
 
 
 # ============================================================== helpers
@@ -84,7 +87,7 @@ def front_xz(w, h, r, cz, depth, y_from):
             .edges("|Y").fillet(r).translate((0, y_from, 0)))
 
 
-CLIFF_X = (3.0, 33.0)              # each cliff module spans x = 3..33 (mirrored)
+CLIFF_X = (1.3, 33.3)              # each cliff module spans x = 1.3..33.3 (mirrored)
 CLIFF_Y = (26.0, 40.0)
 
 
@@ -106,7 +109,7 @@ def make_shell():
     # rear openings — oversized on purpose
     s = s.cut(box(13, 12, 8, -21.2, -D / 2, SPLIT_Z + 0.6).edges("|Y").fillet(2))    # charge USB-C
     s = s.cut(box(13, 12, 8, 0, -D / 2, DECK_Z - 0.5).edges("|Y").fillet(2))         # Nano USB-C
-    s = s.cut(box(10, 12, 5, 18, -D / 2, SPLIT_Z + 2.0).edges("|Y").fillet(1))       # slide switch
+    s = s.cut(box(10, 12, 5, 18, -D / 2, SPLIT_Z + 1.0).edges("|Y").fillet(1))       # slide switch
 
     # "pet me" dimple + touch-sensor cage under it
     s = s.cut(cq.Workplane("XY").sphere(34).translate((0, -2, Z_TOP + 34 - 1.4)))
@@ -163,6 +166,17 @@ def make_wheel():
     return w   # local frame: x 0..WHEEL_W, axis on X
 
 
+# ============================================================== motor cap (print 3: 2 + 1 spare)
+def make_motor_cap():
+    x0, x1 = MOTOR_X0 + 2, MOTOR_X1 - 2
+    cap = box(x1 - x0, CRADLE_W, 2.0, (x0 + x1) / 2, 0, 0)
+    cap = cap.union(box(x1 - x0 - 10, MOTOR_W - 2, 0.5, (x0 + x1) / 2, 0, -0.5))   # presses the motor (0.2 mm)
+    for x in (MOTOR_X0 + 4, MOTOR_X1 - 4):
+        for dy in (-CAP_HOLE_DY, CAP_HOLE_DY):
+            cap = cap.cut(cq.Workplane("XY").circle(1.2).extrude(4).translate((x, dy, -1)))
+    return cap   # local frame: right motor, y centred on the axle, z = 0 at the cradle tops
+
+
 # ============================================================== chassis
 def make_chassis():
     c = rounded_block(W, D, FLOOR, Z0, R_V, 0, 1.0)
@@ -177,11 +191,13 @@ def make_chassis():
         c = c.union(box(IN_X - TOL - FENDER_X - 1.4, 2 * WELL_HY, 1.6,
                         sx * (FENDER_X + 1.4 + (IN_X - TOL - FENDER_X - 1.4) / 2), AXLE_Y, WELL_Z - 1.6))
 
-        # motor clamps (2 per motor) — motor slides in from the centre
-        mz = AXLE_Z - MOTOR_H / 2
+        # motor cradles (2 per motor), open on top: the motor drops in, then a printed
+        # cap is screwed on top (2 x M2 self-tapping per cradle)
         for x in (MOTOR_X0 + 4, MOTOR_X1 - 4):
-            u = box(4, MOTOR_W + 5, mz + MOTOR_H + 2 - SPLIT_Z, sx * x, AXLE_Y, SPLIT_Z)
-            u = u.cut(box(5, MOTOR_W + TOL, MOTOR_H + TOL, sx * x, AXLE_Y, mz))
+            u = box(4, CRADLE_W, CAP_Z - SPLIT_Z, sx * x, AXLE_Y, SPLIT_Z)
+            u = u.cut(box(5, MOTOR_W + TOL, 30, sx * x, AXLE_Y, AXLE_Z - MOTOR_H / 2))
+            for dy in (-CAP_HOLE_DY, CAP_HOLE_DY):
+                u = u.cut(cq.Workplane("XY").circle(0.8).extrude(7).translate((sx * x, AXLE_Y + dy, CAP_Z - 6.9)))
             c = c.union(u)
 
         # cliff sensor hanger: plate under which the TCRT5000 module is taped (components down)
@@ -299,10 +315,11 @@ def make_parts():
 
 def build():
     shell, chassis, face, wheel = make_shell(), make_chassis(), make_faceplate(), make_wheel()
+    cap = make_motor_cap()
     parts = make_parts()
     (OUT / "stl").mkdir(exist_ok=True)
     (OUT / "preview").mkdir(exist_ok=True)
-    for name, solid in (("shell", shell), ("chassis", chassis), ("faceplate", face), ("wheel", wheel)):
+    for name, solid in (("shell", shell), ("chassis", chassis), ("faceplate", face), ("wheel", wheel), ("motor_cap", cap)):
         cq.exporters.export(solid, str(OUT / "stl" / f"{name}.stl"), tolerance=0.04, angularTolerance=0.1)
 
     assy = cq.Assembly(name="robot")
@@ -313,6 +330,9 @@ def build():
         wloc = wheel.translate((WHEEL_X0, AXLE_Y, AXLE_Z)) if sx > 0 else \
             wheel.mirror("YZ").translate((-WHEEL_X0, AXLE_Y, AXLE_Z))
         assy.add(wloc, name=f"wheel_{'r' if sx > 0 else 'l'}", color=cq.Color(0.98, 0.72, 0.68))
+    for sx in (-1, 1):
+        cl = cap.translate((0, AXLE_Y, CAP_Z)) if sx > 0 else cap.mirror("YZ").translate((0, AXLE_Y, CAP_Z))
+        assy.add(cl, name=f"motor_cap_{'r' if sx > 0 else 'l'}", color=cq.Color(0.98, 0.72, 0.68))
     for n, (s, col) in parts.items():
         assy.add(s, name=n, color=cq.Color(*col))
     assy.save(str(OUT / "preview" / "robot.glb"))

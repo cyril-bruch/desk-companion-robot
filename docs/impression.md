@@ -9,8 +9,9 @@ Tout est dans `cad/stl/`. Matière : **PLA**. Tout tient sur n'importe quel plat
 | `chassis.stl` (plancher) | 1 | n'importe laquelle (caché) | plancher **contre le plateau** | **oui**, arborescents (étagères intérieures) |
 | `faceplate.stl` (façade) | **2** (1 de rechange) | **noir** | face avant **contre le plateau** | non |
 | `wheel.stl` (roue) | **4** (2 de rechange) | n'importe laquelle | à plat | non |
+| `motor_cap.stl` (capot moteur) | **3** (1 de rechange) | n'importe laquelle | à plat, petit relief vers le haut | non |
 
-Prévois **2 plateaux** si besoin : (1) coque seule ; (2) châssis + façades + roues.
+Prévois **2 plateaux** si besoin : (1) coque seule ; (2) châssis + façades + roues + capots moteurs.
 
 ## Réglages
 - Hauteur de couche **0,2 mm**

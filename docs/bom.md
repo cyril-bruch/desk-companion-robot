@@ -28,6 +28,7 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 | 8 | Batterie LiPo 803040 1000 mAh, protégée | **1 PCS** | 8 × 30 × 40 mm | 1 | 4,59 € | [lien](https://fr.aliexpress.com/item/1005008820788359.html) |
 | 9 | Chargeur TP4056 avec protection | **18650 Type-c** + **2pc** | ≈ 28 × 17 mm (non publié, à mesurer) | 1 lot | 2,38 € | [lien](https://fr.aliexpress.com/item/1005010585482772.html) |
 | 10 | Régulateur 5 V fixe TPS61023 | — | petit module (baie interne) | 1 | 3,39 € | [lien](https://fr.aliexpress.com/item/1005009465120439.html) |
+| 10b | **Régulateur élévateur MT3608** (alimente la Nano par VIN en 7,5 V — voir `assemblage.md`) | — | ≈ 36 × 17 mm | 1 | 1,00 € | [lien](https://fr.aliexpress.com/item/1005006361814667.html) |
 | 11 | Interrupteur à glissière SS12D00G3 | — | corps 8,5 × 3,5 mm | 1 lot | 0,63 € | [lien](https://fr.aliexpress.com/item/33013437240.html) |
 
 ## 3. AliExpress — outillage et consommables (réutilisables)
@@ -40,6 +41,8 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 | 15 | Adhésif double face extra-fort (fixe les petites cartes dans leurs baies) | — | 2,09 € | [lien](https://fr.aliexpress.com/item/1005007168731397.html) |
 
 ---
+
+> **Ajout du 24/10** : le MT3608 (ligne 10b, 1 €). La doc officielle de la Nano R4 ne prévoit pas de l'alimenter par sa broche 5V, donc on passe par VIN (6–21 V). Le TPS61023 devient une rechange. Si ta commande est déjà passée, ajoute juste ce MT3608.
 
 ## Ce qui change par rapport au design v0
 - **Roues imprimées en 3D** avec un joint torique comme pneu (pas de roues N20 fiables sur AliExpress) → le design colle exactement.
