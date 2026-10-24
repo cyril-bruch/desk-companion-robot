@@ -36,6 +36,7 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 | Patin arrière imprimé vs roues | bas du patin et bas des pneus tous les deux à 0 mm : robot à plat | ✅ |
 | Capteurs anti-chute | œil à ~10 mm du sol (plage 1–25 mm) | ✅ |
 | Ports USB-C (Nano et charge) | à 0,6–0,9 mm derrière leurs ouvertures | ✅ |
+| Passage des fils, robot fermé | 13 trajets testés (moteurs → driver, driver/chargeur/MT3608 → Nano, batterie → chargeur, chargeur → interrupteur, capteurs, buzzer, écran, caresse) : tous passent avec un faisceau de 4 mm | ✅ |
 | Passage pour glisser la batterie | 13,7 mm pour 11,5 mm nécessaires (cadre prévu pour 42 × 30 × 8,5 mm) | ✅ |
 | Tout tient sur la Dreamer (230 × 150 × 140 mm) | plus grande pièce 92 × 92 × 79 mm | ✅ |
 | Fichiers d'impression | 1 seul volume fermé par pièce (« étanche ») | ✅ |
@@ -94,6 +95,12 @@ Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chut
 | Batterie (après interrupteur) | OUT+ du TP4056 | → | **A0** | fil soudé côté TP4056 |
 
 Utilisées : D2, D3, D5–D10, A0, A4, A5. **Libres pour la suite : D4, D11, D12, D13, A1, A2, A3.**
+
+**Chemin des fils des moteurs** : ils sortent à l'arrière de chaque moteur, dans l'espace de 14 mm entre les deux
+moteurs, puis filent vers l'arrière sur le plancher, sous l'étagère batterie (10 mm de haut, juste 4 petits poteaux),
+jusqu'au driver en bas à droite. Les autres fils montent vers la Nano par les côtés, entre les étagères et la coque
+(≈ 20 mm de libre de chaque côté). Laisse ≈ 10 cm de mou aux fils de l'écran, de la caresse et de l'interrupteur
+pour pouvoir soulever la coque.
 
 **Pourquoi des fils soudés à certains endroits** : le driver est sous l'étagère batterie et les capteurs anti-chute sont
 accrochés sous leurs étagères, broches vers le bas : il n'y a pas la hauteur pour un connecteur Dupont (14 mm).
