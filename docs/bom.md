@@ -1,9 +1,9 @@
 # Liste des pièces (BOM) — v1 « AliExpress »
 
-_Vérifié le 23/10/2026 : chaque lien, prix et dimension a été relevé sur la page produit._
+_Vérifié le 23–24/10/2026 : chaque lien, prix et dimension a été relevé sur la page produit (sauf le buzzer, voir ligne 16)._
 _Le prix affiché par AliExpress est celui de l'option la moins chère : **choisis bien l'option indiquée**._
 
-**Total ≈ 60 € outils compris** (≈ 44 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
+**Total ≈ 59 € outils compris** (≈ 42 € AliExpress + 16,50 € Amazon), contre ≈ 167 € pour la version Amazon/RobotShop
 (toujours disponible dans l'historique Git). Livraison AliExpress : 1 à 3 semaines.
 
 ---
@@ -27,9 +27,9 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 | 7 | Capteur caresse TTP223 | **TTP223** | 15 × 11 mm | 1 | 0,37 € | [lien](https://fr.aliexpress.com/item/1005008530579725.html) |
 | 8 | Batterie LiPo 803040 1000 mAh, protégée | **1 PCS** | 8 × 30 × 40 mm | 1 | 4,59 € | [lien](https://fr.aliexpress.com/item/1005008820788359.html) |
 | 9 | Chargeur TP4056 avec protection | **18650 Type-c** + **2pc** | ≈ 28 × 17 mm (non publié, à mesurer) | 1 lot | 2,38 € | [lien](https://fr.aliexpress.com/item/1005010585482772.html) |
-| 10 | Régulateur 5 V fixe TPS61023 | — | petit module (baie interne) | 1 | 3,39 € | [lien](https://fr.aliexpress.com/item/1005009465120439.html) |
-| 10b | **Régulateur élévateur MT3608** (alimente la Nano par VIN en 7,5 V — voir `assemblage.md`) | — | ≈ 36 × 17 mm | 1 | 1,00 € | [lien](https://fr.aliexpress.com/item/1005006361814667.html) |
+| 10 | Régulateur élévateur **MT3608** (batterie 3,7 V → **7,5 V** sur VIN de la Nano et les moteurs) | 1 pièce (2 si tu veux une rechange) | ≈ 36 × 17 mm, hauteur ≈ 9 mm avec le potentiomètre | 1 | 1,00 € | [lien](https://fr.aliexpress.com/item/1005006361814667.html) |
 | 11 | Interrupteur à glissière SS12D00G3 | — | corps 8,5 × 3,5 mm | 1 lot | 0,63 € | [lien](https://fr.aliexpress.com/item/33013437240.html) |
+| 16 | **Buzzer piézo PASSIF** 12 mm, 3–5 V, 2 pattes (« passive piezo buzzer 12×9.5 ») — ⚠️ pas « actif », pas « magnétique » | passif | Ø 12 × 9,5 mm | 1 | ≈ 1 € | lien à ajouter (navigateur indisponible lors de la mise à jour) |
 
 ## 3. AliExpress — outillage et consommables (réutilisables)
 
@@ -42,7 +42,9 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 
 ---
 
-> **Ajout du 24/10** : le MT3608 (ligne 10b, 1 €). La doc officielle de la Nano R4 ne prévoit pas de l'alimenter par sa broche 5V, donc on passe par VIN (6–21 V). Le TPS61023 devient une rechange. Si ta commande est déjà passée, ajoute juste ce MT3608.
+> **Mise à jour du 24/10** :
+> - **MT3608 à la place du TPS61023** : la doc officielle de la Nano R4 ne prévoit pas de l'alimenter par sa broche 5V, on passe donc par VIN (6–21 V) en 7,5 V. ⚠️ Régler le MT3608 à 7,5 V au voltmètre **avant** de le brancher.
+> - **Buzzer piézo passif ajouté** : passif = on choisit la fréquence de chaque note (petits « pouip » mignons) ; un buzzer actif ne fait qu'un seul bip strident. Le piézo consomme quelques mA : il se branche directement sur une broche, sans transistor.
 
 ## Ce qui change par rapport au design v0
 - **Roues imprimées en 3D** avec un joint torique comme pneu (pas de roues N20 fiables sur AliExpress) → le design colle exactement.
@@ -54,4 +56,4 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 - **Écran** : l'ordre des broches est VDD-GND-SCK-SDA (VDD en premier), attention au câblage.
 - **Recharge** : port USB-C du TP4056 à l'arrière. LED rouge = en charge, bleue/verte = chargé.
 - **Batterie LiPo** : première charge sous surveillance.
-- **Règle d'alimentation** : interrupteur sur OFF quand la carte est branchée en USB au PC.
+- **USB + batterie en même temps** : la Nano R4 a un circuit qui choisit automatiquement entre VIN et l'USB-C (doc officielle), tu peux donc la programmer robot allumé.

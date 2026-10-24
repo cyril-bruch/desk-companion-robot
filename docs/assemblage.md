@@ -2,6 +2,7 @@
 
 Ce document décrit **où va chaque pièce**, **comment tout se branche** et **dans quel ordre monter**.
 Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur une pièce dans l'aperçu 3D pour la voir.
+Vérifié par calcul : aucune pièce achetée ne touche une pièce imprimée ni une autre pièce achetée.
 
 ---
 
@@ -9,35 +10,50 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 
 | Niveau | Hauteur | Ce qu'il y a |
 |---|---|---|
-| **Sous le plancher** | 0–5 mm | bille folle (arrière), fenêtres des capteurs anti-chute (avant) |
-| **Plancher** | 7 mm | moteurs + capots (milieu) · chargeur USB-C (arrière gauche) · driver moteurs (arrière droit) · régulateur (avant centre) · interrupteur (arrière droit, contre la paroi) |
-| **Étagères avant** | 19 mm | 2 capteurs anti-chute collés **dessous**, œil tourné vers le sol (~1 cm du bureau) |
+| **Sous le plancher** | 0–5 mm | bille folle (arrière), fenêtres des capteurs anti-chute (avant), grille du buzzer (7 trous, centre) |
+| **Plancher** | 7 mm | moteurs + capots (milieu) · buzzer dans son anneau (derrière les moteurs) · chargeur USB-C (arrière gauche) · driver moteurs (arrière droit) · interrupteur (arrière droit, contre la paroi) |
+| **Étagères avant** | 19–21 mm | **dessous** : 2 capteurs anti-chute, œil vers le sol (~1 cm du bureau) · **dessus** : régulateur MT3608 (à cheval sur les deux étagères) |
 | **Étagère batterie** | 19,5 mm | batterie 1000 mAh (arrière) |
 | **Plateau Nano** | 35 mm | Arduino Nano R4, USB-C contre la paroi arrière |
 | **Coque, face avant** | 37–72 mm | façade noire + écran OLED glissé dans ses guides |
 | **Coque, dessus** | ~78 mm | capteur de caresse collé dans sa cage sous le creux |
 
-Arrière du robot, de gauche à droite (vu de dos) : **port de charge USB-C** (bas) · **port de programmation Nano** (milieu) · **interrupteur** (bas).
+Arrière du robot (vu de dos, de gauche à droite) : **port de charge USB-C** (bas) · **port de programmation Nano** (milieu) · **interrupteur** (bas).
+
+Espaces les plus serrés : buzzer ↔ batterie 2,6 mm · batterie ↔ Nano 7,5 mm · MT3608 ↔ écran 7,8 mm.
 
 ---
 
 ## 2. Alimentation
 
 ```
-Batterie 3,7 V ──► TP4056 (B+ / B-)          ◄── USB-C de charge
+Batterie 3,7 V ──► TP4056 (B+ / B-)                 ◄── câble USB-C (recharge)
                    TP4056 OUT+ ──► interrupteur ──► MT3608 IN+ ──► 7,5 V ──┬──► Nano VIN
-                   TP4056 OUT- ──────────────────► MT3608 IN- ──► GND ────┤
-                                                                         └──► DRV8833 VCC (moteurs)
+                        │                                                 └──► DRV8833 VCC (moteurs)
+                        └──────────────► Nano A0 (mesure de la batterie, bonus)
+                   TP4056 OUT- ──────────────────► MT3608 IN- ──► GND commun à tout
 Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chute
+Nano D3 ──► buzzer piézo ──► GND
 ```
 
-**Pourquoi 7,5 V sur VIN :** la doc officielle de la Nano R4 ne prévoit pas d'alimenter la carte par sa broche 5V ;
-elle s'alimente par **VIN (6–21 V)** ou l'USB-C. On remonte donc la batterie à 7,5 V avec un MT3608, et c'est le
-régulateur de la Nano qui fournit le 5 V propre aux capteurs.
-⚠️ **Régler le MT3608 à 7,5 V au voltmètre AVANT de le brancher** (vis du potentiomètre).
-⚠️ Les moteurs sont des 6 V : dans Simulink, on **limite le PWM à 80 %** (≈ 6 V moyens). C'est une saturation dans le modèle.
+- **Pourquoi 7,5 V sur VIN** : la doc officielle de la Nano R4 prévoit VIN (6–21 V) ou l'USB-C, pas la broche 5V.
+  ⚠️ **Régler le MT3608 à 7,5 V au voltmètre AVANT de le brancher** (petite vis du potentiomètre).
+- **Moteurs 6 V sous 7,5 V** : dans Simulink, on **limite le PWM à 80 %** (≈ 6 V moyens) avec une saturation.
+- **USB et batterie en même temps** : la Nano R4 choisit automatiquement entre VIN et l'USB-C (doc officielle),
+  tu peux programmer le robot allumé.
+- **Mesure batterie (bonus, 1 fil)** : la tension batterie (3,0–4,2 V) reste sous 5 V, elle peut aller directement
+  sur A0. Simulink pourra afficher des yeux « fatigués » quand la batterie est faible.
 
-> Le module TPS61023 (5 V fixe) de la commande n'est alors plus nécessaire : garde-le en rechange.
+### Bilan de consommation (estimation)
+| Charge | Courant |
+|---|---|
+| Nano + écran + 2 capteurs anti-chute + caresse + buzzer (sur le 5V de la Nano) | ≈ 120 mA |
+| 2 moteurs en roulant (PWM limité) | ≈ 250 mA sous 7,5 V |
+| **Côté batterie** (rendement MT3608 ≈ 85 %) | **≈ 0,8 A en roulant**, ≈ 0,25 A à l'arrêt yeux allumés |
+
+La batterie (1 A en continu) et le TP4056 protégé (coupure ≈ 3 A) tiennent. Autonomie estimée : ~1 h 15 en roulant
+sans arrêt, ~3–4 h en usage normal (il roule un peu, regarde, dort). Seul cas limite : les deux moteurs **bloqués**
+(≈ 1,2 A sous 7,5 V) → dans Simulink, démarrage progressif (rampe) et arrêt si un moteur reste bloqué.
 
 ---
 
@@ -50,41 +66,73 @@ régulateur de la Nano qui fournit le 5 V propre aux capteurs.
 | | IN3 / IN4 | → | **D9** / **D10** | moteur droit (2 PWM) |
 | | VCC / GND | → | 7,5 V / GND | alimentation moteurs |
 | | EEP (ou SLP/STBY) s'il existe | → | 5V | sinon le driver reste en veille |
-| | OUT1-OUT2 / OUT3-OUT4 | → | moteur G / moteur D | si un moteur tourne à l'envers : inverser ses 2 fils |
-| Capteur anti-chute G | DO / VCC / GND | → | **D7** / 5V / GND | régler le potentiomètre sur le bureau |
+| | OUT1-OUT2 / OUT3-OUT4 | → | moteur G / moteur D | un moteur tourne à l'envers → inverser ses 2 fils |
+| Capteur anti-chute G | DO / VCC / GND | → | **D7** / 5V / GND | régler le potentiomètre posé sur le bureau |
 | Capteur anti-chute D | DO / VCC / GND | → | **D8** / 5V / GND | |
-| Capteur de caresse | SIG (I/O) / VCC / GND | → | **D2** / 5V / GND | lu en continu par Simulink |
+| Capteur de caresse | SIG / VCC / GND | → | **D2** / 5V / GND | |
+| **Buzzer piézo** | + / − | → | **D3** / GND | direct, sans transistor (piézo = quelques mA) |
 | MT3608 | OUT+ / OUT- | → | **VIN** / GND | 7,5 V |
+| Batterie (après interrupteur) | TP4056 OUT+ | → | **A0** | bonus : niveau de batterie |
 
-Broches PWM de la Nano R4 (doc officielle) : D3, D5, D6, D9, D10, D11. Libres pour la suite : D3, D4, D11, D12, A0–A3.
+**Il reste assez de broches** : utilisées D2, D3, D5–D10, A0, A4, A5 → libres pour la suite : **D4, D11, D12, D13, A1, A2, A3**.
+Broches PWM de la Nano R4 (doc officielle) : D3, D5, D6, D9, D10, D11.
+
+### Le buzzer « mignon »
+- **Passif** = Simulink choisit la fréquence de chaque son. On fait des **petits « pouip »** : sons courts (30–120 ms),
+  glissandos montants (content), descendants (endormi), petites suites aléatoires façon R2-D2.
+- Il est **à l'intérieur**, il sonne par la grille sous le plancher : le son rebondit sur le bureau, il est plus doux.
+- Le volume se règle aussi par logiciel : en évitant la fréquence de résonance (~4 kHz), le son est plus feutré.
+- Côté Simulink : il n'y a pas de bloc « tone » tout fait. On fera un petit bloc personnalisé (même technique que
+  pour l'écran, donc une seule chose à apprendre pour les deux).
 
 ---
 
-## 4. Ordre de montage
+## 4. Vis et trous : rien à percer
+
+Tous les trous sont **dans les fichiers 3D** :
+
+| Où | Trous | Vis |
+|---|---|---|
+| Coque ↔ plancher | 4 trous Ø 2,2 mm avec logement de tête sous le plancher → 4 colonnes dans la coque (avant-trou Ø 1,7 mm) | 4 × M2 × 8 à 10 mm |
+| Capots moteurs ↔ berceaux | 2 trous par berceau (avant-trous Ø 1,6 mm), 4 par moteur | 8 × M2 × 6 mm |
+| Bille folle ↔ chapeau arrière | croix de fentes de 2,4 mm : s'adapte à l'écartement des trous de la bille | 2 × M2 + écrous (ou double face) |
+
+Les vis M2 se vissent directement dans le plastique (l'avant-trou est un peu plus petit que la vis, elles « taraudent »
+le PLA). Si un trou est imprimé trop fin, passer un foret de 1,5 mm à la main. Toutes les petites cartes se collent au
+double face : pas de vis.
+
+---
+
+## 5. Ordre de montage
 
 **Avant tout : tester chaque composant seul sur table** (câbles Dupont), un par un dans Simulink :
-moteurs → capteurs anti-chute → capteur de caresse → écran. On ne monte dans le robot que ce qui marche.
+moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran. On ne monte dans le robot que ce qui marche.
 
-1. **Souder** : 2 fils sur chaque moteur ; fils sur le TP4056 (B+, B-, OUT+, OUT-), le MT3608 et l'interrupteur ;
-   broches sur le DRV8833 si elles sont livrées à part. Gaines thermo sur les soudures d'alimentation.
-2. **Roues** : 2 joints toriques par roue, puis emmancher sur l'axe des moteurs.
-3. **Plancher, niveau bas** (coque retirée) :
-   - poser les moteurs dans leurs berceaux, fils vers le centre, visser les **capots moteurs** (2 vis M2 chacun) ;
-   - visser/coller la **bille folle** sous le chapeau arrière ;
-   - coller le **chargeur** (glissé par la gauche, USB-C face à l'ouverture arrière), le **driver** (arrière droit),
-     le **MT3608** (avant centre) et l'**interrupteur** entre ses deux cales ;
-   - coller les **2 capteurs anti-chute** sous les étagères avant, œil au-dessus des fenêtres du plancher.
-4. **Batterie** : souder/brancher sur B+/B- du TP4056, puis la poser dans son cadre sur l'étagère (elle passe en l'inclinant).
-5. **Nano** : la coller sur son plateau, USB-C contre l'ouverture arrière. Faire tout le câblage du tableau ci-dessus,
+1. **Souder** : 2 fils sur chaque moteur et sur le buzzer ; fils sur le TP4056 (B+, B-, OUT+, OUT-), le MT3608 et
+   l'interrupteur ; broches sur le DRV8833 si elles sont livrées à part. Gaines thermo sur les soudures d'alimentation.
+2. **Régler le MT3608 à 7,5 V** (batterie branchée en entrée, voltmètre en sortie), avant de le relier à quoi que ce soit.
+3. **Roues** : 2 joints toriques par roue, puis emmancher sur l'axe des moteurs.
+4. **Plancher, niveau bas** (coque retirée) :
+   - poser les moteurs dans leurs berceaux, fils vers le centre, visser les **capots moteurs** ;
+   - visser la **bille folle** sous le chapeau arrière ;
+   - poser le **buzzer** dans son anneau (au-dessus de la grille) ;
+   - coller le **chargeur** (glissé par la gauche, USB-C face à l'ouverture arrière), le **driver** (arrière droit)
+     et l'**interrupteur** entre ses deux cales ;
+   - coller les **2 capteurs anti-chute** sous les étagères avant, œil au-dessus des fenêtres du plancher,
+     puis le **MT3608** sur le dessus des étagères.
+5. **Batterie** : brancher sur B+/B- du TP4056, puis la poser dans son cadre sur l'étagère (elle passe en l'inclinant :
+   13,7 mm de passage pour 11 mm nécessaires).
+6. **Nano** : la coller sur son plateau, USB-C contre l'ouverture arrière. Faire tout le câblage du tableau,
    fils passés par les trous du plancher et des étagères.
-6. **Test complet coque ouverte** : charge (LED rouge/verte), interrupteur, 7,5 V sur VIN, deploy Simulink, chaque capteur.
-7. **Coque** : clipser/coller la **façade** par l'intérieur, glisser l'**écran** par le haut dans ses guides,
+7. **Test complet coque ouverte** : charge (LED rouge/verte), interrupteur, 7,5 V sur VIN, deploy Simulink, chaque capteur, buzzer.
+8. **Coque** : clipser/coller la **façade** par l'intérieur, glisser l'**écran** par le haut dans ses guides,
    coller le **capteur de caresse** dans sa cage (face sensible contre la coque).
-8. **Fermeture** : brancher l'écran et le capteur de caresse, descendre la coque sur le plancher, **4 vis M2** par-dessous.
+9. **Fermeture** : brancher l'écran et le capteur de caresse, descendre la coque sur le plancher, **4 vis M2** par-dessous.
 
 ---
 
-## 5. Points encore ouverts
-- Les cotes du chargeur et du driver ne sont pas publiées : leurs emplacements sont larges, à vérifier à réception.
+## 6. Points encore ouverts
+- Cotes non publiées (chargeur, driver, MT3608, buzzer) : emplacements larges, à vérifier à réception.
 - Hauteur exacte de la bille folle (15 mm annoncés) : si le robot penche, caler avec des rondelles M2.
-- Le sens de rotation des moteurs se règle au câblage (ou en inversant le signe dans Simulink).
+- Longueurs exactes des vis du kit M2–M5 non vérifiées : il faut des M2 de 6 et 8–10 mm.
+- Sens de rotation des moteurs : se règle au câblage ou en inversant le signe dans Simulink.

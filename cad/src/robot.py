@@ -36,7 +36,9 @@ NANO = (18.0, 45.0, 1.6)
 BATT = (40.0, 30.0, 8.0)           # 803040
 TP4056 = (17.0, 28.0, 6.0)         # not published -> typical, bay oversized
 DRV = (16.0, 18.5, 8.0)            # not published -> typical
-BOOST = (12.0, 18.0, 4.0)          # not published -> typical
+MT3608 = (37.0, 17.5, 9.0)         # boost 7.5 V: L x W x height incl. trimmer (typical, oversized)
+BUZZER = (12.0, 9.5)               # passive piezo buzzer: diameter, height (standard 12 mm part)
+BUZZER_XY = (0.0, -11.0)
 TCRT = (32.0, 14.0, 10.0)          # module L x W, height with components
 TTP = (15.0, 11.0, 1.6)
 CASTER_H, CASTER_FOOT = 15.0, 20.0 # published height; footprint not published
@@ -227,7 +229,15 @@ def make_chassis():
     c = c.union(box(TP4056[0] + 2, 1.2, 3, CH_X, CH_Y0 + TP4056[1] + TOL + 0.6, SPLIT_Z))
     c = c.union(box(1.2, TP4056[1] * 0.6, 3, CH_X + TP4056[0] / 2 + TOL + 0.6, CH_Y0 + TP4056[1] * 0.7, SPLIT_Z))
     c = c.union(bay(DRV[0] + 2, DRV[1] + 2, 3, 21.0, -21.6, SPLIT_Z))
-    c = c.union(bay(BOOST[0] + 1, BOOST[1] + 2, 2, 0, 29, SPLIT_Z))
+    # buzzer: ring holder + sound grille in the floor (sound bounces off the desk: softer)
+    bx, by = BUZZER_XY
+    c = c.union(cq.Workplane("XY").circle(BUZZER[0] / 2 + TOL + 1.2).circle(BUZZER[0] / 2 + TOL).extrude(4)
+                .translate((bx, by, SPLIT_Z)))
+    import math
+    for i in range(6):
+        a = 2 * math.pi * i / 6
+        c = c.cut(cq.Workplane("XY").circle(1.0).extrude(5).translate((bx + 3.2 * math.cos(a), by + 3.2 * math.sin(a), Z0 - 1)))
+    c = c.cut(cq.Workplane("XY").circle(1.0).extrude(5).translate((bx, by, Z0 - 1)))
     # slide switch: two side blocks at the rear wall
     for dx in (-1, 1):
         c = c.union(box(2.0, 5.0, 5.0, 18 + dx * (SWITCH[0] / 2 + TOL + 1.0), -IN_Y + 3.0, SPLIT_Z))
@@ -287,7 +297,12 @@ def make_parts():
     p["charger"] = (box(TP4056[0], TP4056[1], 1.6, -21.2, -IN_Y + 1.5 + TP4056[1] / 2, SPLIT_Z + 0.2)
                     .union(box(9, 7.5, 3.2, -21.2, -IN_Y + 1.5 + 3.0, SPLIT_Z + 1.8)), (0.15, 0.3, 0.75))
     p["driver"] = (box(DRV[0], DRV[1], 1.6, 21.0, -21.6, SPLIT_Z + 0.2), (0.12, 0.12, 0.14))
-    p["boost"] = (box(BOOST[0], BOOST[1], 1.6, 0, 29, SPLIT_Z + 0.2), (0.15, 0.3, 0.75))
+    # MT3608 taped on top of the two front sensor plates (spans both)
+    mt = box(MT3608[0], MT3608[1], 1.6, 0, 33.0, CLIFF_SHELF_Z + 1.8 + 0.2)
+    mt = mt.union(box(9.5, 4.5, MT3608[2] - 1.6, -9, 33.0 + 4, CLIFF_SHELF_Z + 1.8 + 1.8))   # trimmer
+    p["boost"] = (mt, (0.15, 0.3, 0.75))
+    p["buzzer"] = (cq.Workplane("XY").circle(BUZZER[0] / 2).extrude(BUZZER[1]).translate((*BUZZER_XY, SPLIT_Z + 0.2)),
+                   (0.12, 0.12, 0.14))
     p["switch"] = (box(SWITCH[0], SWITCH[1], SWITCH[2], 18, -IN_Y + 2.5, SPLIT_Z + 1)
                    .union(box(2, 3, 2, 18.5, -IN_Y - 0.5, SPLIT_Z + 1.8)), (0.25, 0.25, 0.28))
     cliff = None
