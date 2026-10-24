@@ -24,7 +24,7 @@ _Vérifié le 24/10/2026 sur Amazon.fr : prix, stock et dimensions relevés sur 
 | 10 | Buzzer | Module buzzer **passif** déclenchement niveau bas, lot de 5 | 38 × 13 × 10 mm | 7,99 € | [lien](https://www.amazon.fr/dp/B096ZWCG7F) |
 | 11 | Interrupteur | MTS-102 à levier 6 A, lot de 10 | M6, corps 13 × 8 × 10 mm | 6,99 € | [lien](https://www.amazon.fr/dp/B00VJA8LMO) |
 | — | Capteurs anti-chute | **2 × TCRT5000 récupérés du kit voiture** (voir encadré) | jusqu'à 35 × 16 mm acceptés | 0 € | — |
-| — | 3e point d'appui | **patin imprimé en 3D** (remplace la bille folle) | Ø 16 × 5 mm | 0 € | — |
+| — | 3e point d'appui | **patin imprimé en 3D** (remplace la bille folle) ; option : pastille de feutre 2 mm collée sous le patin « pour feutre » (plus silencieux) | Ø 16 × 5 mm | 0 € | — |
 | | | | | **118,76 €** | |
 
 ## 2. Outils et consommables (à emprunter si possible)

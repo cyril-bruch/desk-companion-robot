@@ -141,7 +141,8 @@ moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran.
 3. **Roues** : 2 joints toriques par roue, puis emmancher sur l'axe des moteurs.
 4. **Plancher** (coque retirée) :
    - moteurs dans leurs berceaux, cosses vers le centre, **capots** vissés ;
-   - **patin arrière** vissé sous le plancher (2 × M2 × 6 + écrous) ;
+   - **patin arrière** vissé sous le plancher (2 × M2 × 6 + écrous) : le normal, ou le « pour feutre » avec une pastille
+     de feutre de 2 mm collée dessous (silencieux) ;
    - **chargeur** collé (glissé par la gauche, USB-C contre l'ouverture), **driver** collé (arrière droit) ;
    - **capteurs anti-chute** collés sous les étagères avant (œil au-dessus des fenêtres), **MT3608** collé dessus.
 5. **Batterie** : souder sur B+/B-, la poser dans son cadre (elle passe en l'inclinant).

@@ -10,12 +10,14 @@ Les fichiers sont dans **`cad/print/`**. Ils sont **déjà tournés dans le bon 
 | Fichier | Contenu | Couleur conseillée | Durée estimée* |
 |---|---|---|---|
 | `PLATEAU_1_coque.stl` | la coque | blanc / crème / pastel | ~6 h |
-| `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs + 2 patins arrière | n'importe laquelle | ~4 h 45 |
+| `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs + 3 patins arrière (2 normaux + 1 « pour feutre ») | n'importe laquelle | ~4 h 45 |
 | `PLATEAU_3_facades_noir.stl` | 2 façades | **noir** | ~25 min |
 
 \* estimation ; FlashPrint donne la durée exacte après le découpage. Total ≈ 95 g de PLA.
-Les pièces existent aussi une par une (`1_coque.stl`, `2_chassis.stl`, `3_facade_x2.stl`, `4_roue_x4.stl`, `5_capot_moteur_x3.stl`, `6_patin_arriere_x2.stl`).
+Les pièces existent aussi une par une (`1_coque.stl`, `2_chassis.stl`, `3_facade_x2.stl`, `4_roue_x4.stl`, `5_capot_moteur_x3.stl`, `6_patin_arriere_x2.stl`, `6b_patin_pour_feutre_2mm.stl`).
 Les roues, capots et patins sont en plusieurs exemplaires : ce sont des rechanges.
+Le patin **« pour feutre »** est 2 mm plus bas : il sert si tu colles plus tard une pastille de feutre de 2 mm dessous
+(robot plus silencieux, ne raye pas le bureau). Sans feutre, utilise le patin normal.
 
 ## Avant tout : une roue de test (15 min)
 Imprime **une seule roue** (`4_roue_x4.stl`) avec les réglages ci-dessous. Quand les pièces seront arrivées :

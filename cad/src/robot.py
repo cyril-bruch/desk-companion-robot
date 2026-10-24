@@ -189,13 +189,17 @@ def make_motor_cap():
 
 
 # ============================================================== rear skid (print 2: 1 + 1 spare)
-def make_skid():
+FELT = 2.0   # optional felt pad glued under the skid (silent, no scratches): variant 6b is lower by this much
+
+
+def make_skid(h=SKID_H):
     """Flange screwed under the floor + smooth dome that slides on the desk.
-    Local frame: flange top at z = 0, dome pointing down to z = -(1.5 + SKID_H)."""
-    r = ((SKID_DOME / 2) ** 2 + SKID_H ** 2) / (2 * SKID_H)          # sphere radius of the cap
+    Local frame: flange top at z = 0, dome pointing down to z = -(1.5 + h).
+    h = SKID_H: bare plastic skid; h = SKID_H - FELT: flatter dome to carry a felt pad."""
+    r = ((SKID_DOME / 2) ** 2 + h ** 2) / (2 * h)                    # sphere radius of the cap
     flange = box(SKID_FLANGE, 18, 1.5, 0, 0, -1.5).edges("|Z").fillet(8.9)
-    cap = (cq.Workplane("XY").sphere(r).translate((0, 0, -1.5 - SKID_H + r))
-           .intersect(box(40, 40, SKID_H, 0, 0, -1.5 - SKID_H)))
+    cap = (cq.Workplane("XY").sphere(r).translate((0, 0, -1.5 - h + r))
+           .intersect(box(40, 40, h, 0, 0, -1.5 - h)))
     skid = flange.union(cap)
     for dx in (-10.0, 10.0):
         skid = skid.cut(cq.Workplane("XY").circle(1.2).extrude(4).translate((dx, 0, -3)))
@@ -359,6 +363,7 @@ def build():
     shell, chassis, face, wheel = make_shell(), make_chassis(), make_faceplate(), make_wheel()
     cap = make_motor_cap()
     skid = make_skid()
+    skid_felt = make_skid(SKID_H - FELT)
     parts = make_parts()
     (OUT / "preview").mkdir(exist_ok=True)
 
@@ -375,6 +380,7 @@ def build():
         "4_roue_x4": on_bed(wheel.rotate((0, 0, 0), (0, 1, 0), -90)),           # axis vertical
         "5_capot_moteur_x3": on_bed(cap.rotate((0, 0, 0), (1, 0, 0), 180)),     # flat face down
         "6_patin_arriere_x2": on_bed(skid.rotate((0, 0, 0), (1, 0, 0), 180)),   # flange down, dome up
+        "6b_patin_pour_feutre_2mm": on_bed(skid_felt.rotate((0, 0, 0), (1, 0, 0), 180)),
     }
     for name, solid in printable.items():
         cq.exporters.export(solid, str(pr / f"{name}.stl"), tolerance=0.03, angularTolerance=0.08)
@@ -399,7 +405,8 @@ def build():
             "PLATEAU_2_chassis_roues_capots": [place(meshes["2_chassis"], -45, 10)]
                 + [place(meshes["4_roue_x4"], 30 + 34 * (i % 2), 40 - 34 * (i // 2)) for i in range(4)]
                 + [place(meshes["5_capot_moteur_x3"], 22 + 26 * i, -50) for i in range(3)]
-                + [place(meshes["6_patin_arriere_x2"], 100, 40 - 34 * i) for i in range(2)],
+                + [place(meshes["6_patin_arriere_x2"], 100, 40 - 34 * i) for i in range(2)]
+                + [place(meshes["6b_patin_pour_feutre_2mm"], 100, -28)],
             "PLATEAU_3_facades_noir": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
         }
         for name, pieces in plates.items():
