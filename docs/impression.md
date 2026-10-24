@@ -55,11 +55,12 @@ Clic droit sur le modèle → **Utiliser l'extrudeur gauche / droit** : celui o�
 | Couleur (à remplir) | ………… | ………… |
 
 ### c) Supports (plateaux 1 et 2 seulement)
-1. Bouton **Supports** (barre d'outils à gauche) → **Paramètres** (ou *Options*) :
-   - Type : **Arborescent** (treelike)
-   - Angle critique (porte-à-faux) : **45°**
-   - Extrudeur des supports : **le même que la pièce**
-2. **Supports automatiques** → valider l'avertissement.
+1. Bouton **Supports** (barre d'outils à gauche) → fenêtre **« Option Supports »** :
+   - Type de supports : **arborescent** (l'icône en forme d'arbre)
+   - **Palier de corniche : 45°** (55° par défaut)
+   - Diamètre du poste 3 mm, diamètre et hauteur de la base 6 mm : laisser par défaut
+   - **Attaché à la plaque : décoché** (sinon pas de supports sous les étagères du plancher)
+2. **Auto Supports** → valider l'avertissement.
 3. Vérifier en tournant la vue : des supports doivent apparaître **sous le plafond de la coque** (plateau 1) et
    **sous les étagères du plancher** (plateau 2). Les supports qui naissent sur le plancher lui-même, c'est normal.
 4. Plateau 3 (façades) : **aucun support**.
