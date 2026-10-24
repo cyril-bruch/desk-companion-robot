@@ -36,9 +36,9 @@ NANO = (18.0, 45.0, 1.6)
 BATT = (40.0, 30.0, 8.0)           # 803040
 TP4056 = (17.0, 28.0, 6.0)         # not published -> typical, bay oversized
 DRV = (16.0, 18.5, 8.0)            # not published -> typical
-MT3608 = (37.0, 17.5, 9.0)         # boost 7.5 V: L x W x height incl. trimmer (typical, oversized)
-BUZZER = (12.0, 9.5)               # passive piezo buzzer: diameter, height (standard 12 mm part)
-BUZZER_XY = (0.0, -11.0)
+MT3608 = (37.0, 17.5, 12.5)        # boost 7.5 V: L x W x height incl. blue trimmer (typical, oversized)
+BUZZER = (32.5, 13.5, 12.0, 9.5)   # MH-FMD passive buzzer module: PCB L x W, buzzer dia, buzzer height
+BUZZER_XY = (0.0, 13.0)            # on the front extension of the Nano deck
 TCRT = (32.0, 14.0, 10.0)          # module L x W, height with components
 TTP = (15.0, 11.0, 1.6)
 CASTER_H, CASTER_FOOT = 15.0, 20.0 # published height; footprint not published
@@ -225,19 +225,10 @@ def make_chassis():
 
     # floor-level bays (boards taped inside)
     # charger: L-shaped stop (front + inner side), USB-C end free toward the rear opening
-    CH_X, CH_Y0 = -21.2, -IN_Y + 1.5                  # board centre x, rear edge y
+    CH_X, CH_Y0 = -21.2, -IN_Y + 0.9                  # board centre x, rear edge y (port close to the wall)
     c = c.union(box(TP4056[0] + 2, 1.2, 3, CH_X, CH_Y0 + TP4056[1] + TOL + 0.6, SPLIT_Z))
     c = c.union(box(1.2, TP4056[1] * 0.6, 3, CH_X + TP4056[0] / 2 + TOL + 0.6, CH_Y0 + TP4056[1] * 0.7, SPLIT_Z))
     c = c.union(bay(DRV[0] + 2, DRV[1] + 2, 3, 21.0, -21.6, SPLIT_Z))
-    # buzzer: ring holder + sound grille in the floor (sound bounces off the desk: softer)
-    bx, by = BUZZER_XY
-    c = c.union(cq.Workplane("XY").circle(BUZZER[0] / 2 + TOL + 1.2).circle(BUZZER[0] / 2 + TOL).extrude(4)
-                .translate((bx, by, SPLIT_Z)))
-    import math
-    for i in range(6):
-        a = 2 * math.pi * i / 6
-        c = c.cut(cq.Workplane("XY").circle(1.0).extrude(5).translate((bx + 3.2 * math.cos(a), by + 3.2 * math.sin(a), Z0 - 1)))
-    c = c.cut(cq.Workplane("XY").circle(1.0).extrude(5).translate((bx, by, Z0 - 1)))
     # slide switch: two side blocks at the rear wall
     for dx in (-1, 1):
         c = c.union(box(2.0, 5.0, 5.0, 18 + dx * (SWITCH[0] / 2 + TOL + 1.0), -IN_Y + 3.0, SPLIT_Z))
@@ -249,12 +240,21 @@ def make_chassis():
     for (px, py) in ((22, -5), (-22, -5), (27, -36), (-9, -12)):
         c = c.union(box(3, 3, BATT_SHELF_Z - 1.8 - SPLIT_Z, px, py, SPLIT_Z))
 
-    # Nano deck (posts stand on the battery shelf), USB-C at the rear wall
-    deck_y0, deck_y1 = -IN_Y + 0.8, 3.0
-    c = c.union(box(34, deck_y1 - deck_y0, 1.8, 0, (deck_y0 + deck_y1) / 2, DECK_Z - 1.8))
-    c = c.union(bay(NANO[0] + 1.5, NANO[1] + 1.0, 2, 0, deck_y0 + (NANO[1] + 1.0) / 2 + 1.2, DECK_Z))
+    # Nano deck (posts on the battery shelf + 2 front posts on the floor).
+    # Nano: USB-C 0.6 mm from the rear wall, right behind the rear opening (cable plugs in from outside).
+    deck_y0, deck_y1 = -IN_Y + 0.8, 22.0
+    c = c.union(box(38, deck_y1 - deck_y0, 1.8, 0, (deck_y0 + deck_y1) / 2, DECK_Z - 1.8))
+    ny0, ny1 = -IN_Y + 0.6, -IN_Y + 0.6 + NANO[1]
+    for sx in (-1, 1):                                   # side rails, open at the rear
+        c = c.union(box(1.2, NANO[1] - 4, 2, sx * (NANO[0] / 2 + TOL + 0.6), (ny0 + ny1) / 2 + 2, DECK_Z))
+    c = c.union(box(NANO[0] + 2 * TOL + 2.4, 1.2, 2, 0, ny1 + TOL + 0.6, DECK_Z))        # front stop
     for (px, py) in ((15.5, -6), (-15.5, -6), (15.5, deck_y0 + 2), (-15.5, deck_y0 + 2)):
         c = c.union(box(2.5, 2.5, DECK_Z - 1.8 - BATT_SHELF_Z, px, py, BATT_SHELF_Z))
+    for px in (15.5, -15.5):                             # front posts down to the floor
+        c = c.union(box(2.5, 2.5, DECK_Z - 1.8 - SPLIT_Z, px, 20.0, SPLIT_Z))
+    # buzzer module bay on the deck extension
+    bx, by = BUZZER_XY
+    c = c.union(bay(BUZZER[0] + 2.5, BUZZER[1] + 2.5, 2, bx, by, DECK_Z))
 
     # wire passages
     for (hx, hy) in ((0, -1), (-12, 12), (12, 12)):
@@ -293,16 +293,20 @@ def make_parts():
 
     sy0 = -IN_Y + 0.8
     p["battery"] = (box(*BATT, 0, (sy0 - 3.5) / 2, BATT_SHELF_Z + 0.2), (0.85, 0.75, 0.25))
-    p["nano"] = (box(*NANO, 0, sy0 + NANO[1] / 2 + 1.7, DECK_Z + 0.2), (0.0, 0.55, 0.6))
-    p["charger"] = (box(TP4056[0], TP4056[1], 1.6, -21.2, -IN_Y + 1.5 + TP4056[1] / 2, SPLIT_Z + 0.2)
-                    .union(box(9, 7.5, 3.2, -21.2, -IN_Y + 1.5 + 3.0, SPLIT_Z + 1.8)), (0.15, 0.3, 0.75))
+    p["nano"] = (box(*NANO, 0, -IN_Y + 0.6 + NANO[1] / 2, DECK_Z + 0.2)
+                 .union(box(9.0, 7.5, 3.2, 0, -IN_Y + 0.6 + 3.75, DECK_Z + 1.8)), (0.0, 0.55, 0.6))
+    p["charger"] = (box(TP4056[0], TP4056[1], 1.6, -21.2, -IN_Y + 0.9 + TP4056[1] / 2, SPLIT_Z + 0.2)
+                    .union(box(9, 7.5, 3.2, -21.2, -IN_Y + 0.9 + 3.75, SPLIT_Z + 1.8)), (0.15, 0.3, 0.75))
     p["driver"] = (box(DRV[0], DRV[1], 1.6, 21.0, -21.6, SPLIT_Z + 0.2), (0.12, 0.12, 0.14))
     # MT3608 taped on top of the two front sensor plates (spans both)
     mt = box(MT3608[0], MT3608[1], 1.6, 0, 33.0, CLIFF_SHELF_Z + 1.8 + 0.2)
     mt = mt.union(box(9.5, 4.5, MT3608[2] - 1.6, -9, 33.0 + 4, CLIFF_SHELF_Z + 1.8 + 1.8))   # trimmer
     p["boost"] = (mt, (0.15, 0.3, 0.75))
-    p["buzzer"] = (cq.Workplane("XY").circle(BUZZER[0] / 2).extrude(BUZZER[1]).translate((*BUZZER_XY, SPLIT_Z + 0.2)),
-                   (0.12, 0.12, 0.14))
+    bx, by = BUZZER_XY
+    bz = box(BUZZER[0], BUZZER[1], 1.6, bx, by, DECK_Z + 0.2)
+    bz = bz.union(cq.Workplane("XY").circle(BUZZER[2] / 2).extrude(BUZZER[3]).translate((bx - BUZZER[0] / 2 + 7, by, DECK_Z + 1.8)))
+    bz = bz.union(box(2.6, 8, 11, bx + BUZZER[0] / 2 - 2, by, DECK_Z + 1.8))      # header pins
+    p["buzzer"] = (bz, (0.12, 0.12, 0.14))
     p["switch"] = (box(SWITCH[0], SWITCH[1], SWITCH[2], 18, -IN_Y + 2.5, SPLIT_Z + 1)
                    .union(box(2, 3, 2, 18.5, -IN_Y - 0.5, SPLIT_Z + 1.8)), (0.25, 0.25, 0.28))
     cliff = None
