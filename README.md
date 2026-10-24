@@ -27,7 +27,7 @@ WANDER: random walk; edge detected -> back up + turn
 |---|---|
 | `docs/` | Requirements, decisions, bill of materials |
 | `cad/src/` | Parametric 3D sources (Python / CadQuery) |
-| `cad/stl/` | Print-ready STL files |
+| `cad/print/` | Print-ready STL files (oriented, plus ready-made plates for the FlashForge Dreamer) |
 | `electronics/` | Wiring diagram and pinout |
 | `simulink/models/` | Simulink / Stateflow models (`.slx`) |
 | `simulink/scripts/` | `params.m` — every tunable constant lives here |
@@ -50,7 +50,7 @@ Model-Based Design workflow.
 
 ## Roadmap
 - [x] Requirements & bill of materials
-- [x] 3D design v1 (`cad/src/robot.py`, print guide in `docs/impression.md`)
+- [x] 3D design v1, fully re-checked (`cad/src/robot.py`, print-ready files in `cad/print/`, FlashForge Dreamer settings in `docs/impression.md`)
 - [ ] Print the parts
 - [ ] Component bring-up in Simulink (motors, IR, touch, OLED driver block)
 - [ ] Stateflow behaviours (SLEEP / AWAKE / WANDER / HAPPY)

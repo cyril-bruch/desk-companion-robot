@@ -28,7 +28,7 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 | 8 | Batterie LiPo 803040 1000 mAh, protégée | **1 PCS** | 8 × 30 × 40 mm | 1 | 4,59 € | [lien](https://fr.aliexpress.com/item/1005008820788359.html) |
 | 9 | Chargeur TP4056 avec protection | **18650 Type-c** + **2pc** | ≈ 28 × 17 mm (non publié, à mesurer) | 1 lot | 2,38 € | [lien](https://fr.aliexpress.com/item/1005010585482772.html) |
 | 10 | Régulateur élévateur **MT3608** (batterie 3,7 V → **7,5 V** sur VIN de la Nano et les moteurs) | 1 pièce (2 si tu veux une rechange) | ≈ 36 × 17 mm, hauteur ≈ 12 mm avec le potentiomètre bleu | 1 | 1,00 € | [lien](https://fr.aliexpress.com/item/1005006361814667.html) |
-| 11 | Interrupteur à glissière SS12D00G3 | — | corps 8,5 × 3,5 mm | 1 lot | 0,63 € | [lien](https://fr.aliexpress.com/item/33013437240.html) |
+| 11 | **Interrupteur à levier MTS-102** (ON-ON, 6 A, fixation M6 par écrou) — remplace le SS12D00 (0,5 A, trop faible) | **MTS-102** (lot de 5) | corps 13 × 8 × 10 mm, filetage M6 | 1 lot | 0,96 € | [lien](https://fr.aliexpress.com/item/32840360301.html) |
 | 16 | **Module buzzer PASSIF** MH-FMD (3 broches GND / I/O / VCC, transistor intégré, 3,3–5 V) | **Passif** (⚠️ pas « Actif ») | PCB ≈ 32,5 × 13,5 mm, buzzer Ø 12 mm | 1 | 1,21 € | [lien](https://fr.aliexpress.com/item/1005007287329656.html) |
 
 ## 3. AliExpress — outillage et consommables (réutilisables)
@@ -43,6 +43,7 @@ _Le prix affiché par AliExpress est celui de l'option la moins chère : **chois
 ---
 
 > **Mise à jour du 24/10** :
+> - **Interrupteur MTS-102 à la place du SS12D00** : le petit interrupteur à glissière est donné pour 0,5 A, alors que le robot tire environ 0,8 A en roulant (jusqu'à 3 A moteurs bloqués). Le MTS-102 tient 6 A.
 > - **MT3608 à la place du TPS61023** : la doc officielle de la Nano R4 ne prévoit pas de l'alimenter par sa broche 5V, on passe donc par VIN (6–21 V) en 7,5 V. ⚠️ Régler le MT3608 à 7,5 V au voltmètre **avant** de le brancher.
 > - **Module buzzer passif ajouté** : passif = on choisit la fréquence de chaque note (petits « pouip » mignons) ; un buzzer actif ne fait qu'un seul bip strident. Les petits buzzers passifs vendus seuls sont magnétiques (42 Ω, trop gourmands pour une broche) : le **module** a son transistor intégré, il se branche directement.
 

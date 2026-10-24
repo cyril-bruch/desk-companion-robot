@@ -1,27 +1,56 @@
-# Guide d'impression 3D — v1
+# Impression 3D — v1 sur FlashForge Dreamer
 
-Tout est dans `cad/stl/`. Matière : **PLA**. Tout tient sur n'importe quel plateau (plus grande pièce : 86 × 92 × 87 mm).
+Imprimante : **FlashForge Dreamer** (2 têtes, plateau chauffant, volume 230 × 150 × 140 mm, buse 0,4 mm, filament 1,75 mm).
+Logiciel : **FlashPrint** (le logiciel gratuit de FlashForge). Matière : **PLA**.
 
-## Ce qu'il faut imprimer
-| Fichier | Quantité | Couleur conseillée | Orientation sur le plateau | Supports |
-|---|---|---|---|---|
-| `shell.stl` (coque) | 1 | blanc / crème / pastel | ouverture du bas **contre le plateau** | **oui**, arborescents (« tree »), uniquement pour le plafond intérieur |
-| `chassis.stl` (plancher) | 1 | n'importe laquelle (caché) | plancher **contre le plateau** | **oui**, arborescents (étagères intérieures) |
-| `faceplate.stl` (façade) | **2** (1 de rechange) | **noir** | face avant **contre le plateau** | non |
-| `wheel.stl` (roue) | **4** (2 de rechange) | n'importe laquelle | à plat | non |
-| `motor_cap.stl` (capot moteur) | **3** (1 de rechange) | n'importe laquelle | à plat, petit relief vers le haut | non |
+Les fichiers sont dans **`cad/print/`**. Ils sont **déjà tournés dans le bon sens et posés à plat** : il suffit de les ouvrir.
 
-Prévois **2 plateaux** si besoin : (1) coque seule ; (2) châssis + façades + roues + capots moteurs.
+## Les fichiers
 
-## Réglages
-- Hauteur de couche **0,2 mm**
-- **3 parois** (périmètres), remplissage **15–20 %**
-- Bordure (*brim*) de 5 mm pour la coque si l'imprimante a tendance à décoller les coins
-- Durée estimée : ~5 h pour la coque, ~4 h pour le reste ; ~85 g de PLA au total
+| Fichier | Contenu | Couleur conseillée | Durée estimée* |
+|---|---|---|---|
+| `PLATEAU_1_coque.stl` | la coque | blanc / crème / pastel | ~6 h |
+| `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs | n'importe laquelle | ~4 h 30 |
+| `PLATEAU_3_facades_noir.stl` | 2 façades | **noir** | ~25 min |
+
+\* estimation ; FlashPrint donne la durée exacte après le découpage. Total ≈ 95 g de PLA.
+Les pièces existent aussi une par une (`1_coque.stl`, `2_chassis.stl`, `3_facade_x2.stl`, `4_roue_x4.stl`, `5_capot_moteur_x3.stl`).
+Les roues et capots sont en double / triple : ce sont des rechanges.
+
+## Avant tout : une roue de test (15 min)
+Imprime **une seule roue** (`4_roue_x4.stl`) avec les réglages ci-dessous. Quand les pièces seront arrivées :
+elle doit s'emmancher **en forçant un peu** sur l'axe du moteur, et le joint torique doit tenir dans sa gorge.
+Si c'est trop serré, foret de 3 mm à la main ; si c'est trop lâche, dis-le-moi, je corrige le trou.
+Si tu n'as l'imprimante qu'une fois, saute ce test : le trou est prévu serré, il se rattrape au foret.
+
+## Pas à pas dans FlashPrint
+1. **Imprimante** : menu *Imprimer → Type de machine* → **Dreamer**.
+2. **Charger** le fichier (*Charger*), puis *Placer sur plateau* (le fichier est déjà au bon endroit).
+3. **Supports** (plateaux 1 et 2) : *Supports → Options* : type **Arborescent (Treelike)**, angle **45°**,
+   puis *Support automatique*. Pour la coque, les supports partent tous du plateau (intérieur du plafond et des guides de l'écran).
+   Plateau 3 : pas de supports.
+4. **Imprimer** → cocher *Paramètres avancés*, puis régler :
+
+| Réglage FlashPrint | Valeur |
+|---|---|
+| Extrudeur | droit (ou gauche s'il a le noir pour les façades) |
+| Matériau | PLA |
+| Hauteur de couche | **0,2 mm** (1re couche 0,27 mm) |
+| Coques / périmètres | **3** |
+| Couches pleines dessus / dessous | **4 / 3** |
+| Remplissage | **20 %**, motif hexagone (nid d'abeille) |
+| Vitesse d'impression | **50 mm/s** (périmètres 40 mm/s) |
+| Vitesse de déplacement | 80 mm/s |
+| Température extrudeur | **210 °C** |
+| Température plateau | **50 °C** |
+| Ventilateur | activé (sauf 1re couche) |
+| Radeau (raft) | **non** |
+| Bordure (brim) | **oui** pour les plateaux 1 et 2, non pour le 3 |
+
+5. *OK* → FlashPrint découpe et affiche la durée → enregistrer le fichier **.x3g** sur la carte SD → l'imprimante.
+6. **Enceinte** : pour le PLA, **retirer le couvercle du dessus** de la Dreamer (sinon il fait trop chaud et le PLA se déforme).
 
 ## Après impression
-- Retirer les supports à l'intérieur de la coque (pince + cutter).
-- **Roues** : enfiler 2 joints toriques OD30 × 2,4 mm par roue dans les gorges, puis emmancher la roue sur l'axe du moteur (serré exprès ; si c'est trop dur, passer un foret de 3 mm dans le trou).
-- Les petites cartes (chargeur, driver, régulateur, capteurs anti-chute, capteur de caresse) se collent à l'**adhésif double face** dans leurs emplacements : ils sont volontairement plus larges que les cartes.
-- La façade se clipse/colle dans l'ouverture du visage par l'intérieur ; l'écran glisse ensuite par le haut dans ses guides.
-- La coque se visse sur le plancher avec **4 vis M2** par-dessous.
+- Retirer les supports (pince + cutter), surtout sous les étagères du plancher et dans le plafond de la coque.
+- Vérifier que les 4 colonnes de vis de la coque et les trous des capots ne sont pas bouchés.
+- La façade se met **par l'intérieur** de la coque : elle tient par son rebord, un point de colle si besoin.

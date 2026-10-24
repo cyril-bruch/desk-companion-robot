@@ -6,7 +6,7 @@ Component dimensions: docs/bom.md (AliExpress version). Where the seller does no
 publish a dimension, a typical value for that kind of board is used and the bay is
 oversized ("vise large"): small boards are held with double-sided tape.
 
-Run:  python robot.py      -> ../stl/*.stl  and  ../preview/robot.glb
+Run:  python robot.py      -> ../print/*.stl (print-ready, oriented)  and  ../preview/robot.glb
 """
 from pathlib import Path
 import cadquery as cq
@@ -15,7 +15,7 @@ OUT = Path(__file__).resolve().parent.parent
 
 # ============================================================== parameters
 # --- body
-W, D, H = 86.0, 92.0, 76.0        # outer width, depth, height
+W, D, H = 92.0, 92.0, 76.0        # outer width, depth, height (W 92: room for the motor terminals)
 Z0 = 5.0                           # underside of the floor (ground clearance)
 FLOOR = 2.4
 WALL = 2.2
@@ -33,6 +33,7 @@ RIM_D, FLANGE_D, WHEEL_W = 26.0, 29.0, 8.0
 OLED = (35.5, 33.5, 4.3)           # W, H, total thickness (PCB 1.6)
 OLED_ACTIVE = (29.4, 14.7)
 NANO = (18.0, 45.0, 1.6)
+NANO_PAD = 4.0                     # Nano is flipped: clearance for its components (USB-C 3.2 mm)
 BATT = (40.0, 30.0, 8.0)           # 803040
 TP4056 = (17.0, 28.0, 6.0)         # not published -> typical, bay oversized
 DRV = (16.0, 18.5, 8.0)            # not published -> typical
@@ -42,14 +43,15 @@ BUZZER_XY = (0.0, 13.0)            # on the front extension of the Nano deck
 TCRT = (32.0, 14.0, 10.0)          # module L x W, height with components
 TTP = (15.0, 11.0, 1.6)
 CASTER_H, CASTER_FOOT = 15.0, 20.0 # published height; footprint not published
-SWITCH = (8.5, 3.5, 3.5)
+TOGGLE = (13.0, 8.0, 10.0, 6.0)    # MTS-102: body W x H x depth, + terminals; M6 (1/4") bushing
+TOGGLE_XZ = (22.0, 47.0)          # position on the rear wall
 
 # --- layout
 AXLE_Y = 6.0                       # wheels slightly in front of the centre
 AXLE_Z = TIRE_D / 2
-MOTOR_X0, MOTOR_X1 = 2.0, 2.0 + MOTOR_L          # 2 .. 28
-WHEEL_X0, WHEEL_X1 = 30.5, 30.5 + WHEEL_W        # 30.5 .. 38.5 (body side at 43)
-FENDER_X = 28.4                                   # fender wall inner face
+MOTOR_X0, MOTOR_X1 = 5.0, 5.0 + MOTOR_L          # 5 .. 31 (10 mm between the motor backs for terminals + wires)
+WHEEL_X0, WHEEL_X1 = MOTOR_X1 + 2.5, MOTOR_X1 + 2.5 + WHEEL_W   # 33.5 .. 41.5 (body side at 46)
+FENDER_X = MOTOR_X1 + 0.4                         # fender wall inner face
 WELL_HY = TIRE_D / 2 + 3.0                        # wheel-well half length
 WELL_Z = AXLE_Z + TIRE_D / 2 + 3.0
 CASTER_Y = -30.0
@@ -58,7 +60,7 @@ FACE_W, FACE_H, FACE_R = 40.0, 26.0, 8.0
 BATT_SHELF_Z = 19.5                # top of the battery shelf
 DECK_Z = 35.0                      # top of the Nano deck (room to lift the battery in)
 CLIFF_SHELF_Z = 19.5               # underside of the plates the cliff sensors hang from
-BOSS = [(sx * 37.0, sy * 30.0) for sx in (-1, 1) for sy in (-1, 1)]
+BOSS = [(sx * (W / 2 - 6), sy * 30.0) for sx in (-1, 1) for sy in (-1, 1)]
 CRADLE_W = MOTOR_W + 8                             # motor cradle width (Y)
 CAP_Z = AXLE_Z + MOTOR_H / 2 + 0.3                 # top of the cradles = underside of the cap
 CAP_HOLE_DY = MOTOR_W / 2 + 2.0
@@ -111,7 +113,8 @@ def make_shell():
     # rear openings — oversized on purpose
     s = s.cut(box(13, 12, 8, -21.2, -D / 2, SPLIT_Z + 0.6).edges("|Y").fillet(2))    # charge USB-C
     s = s.cut(box(13, 12, 8, 0, -D / 2, DECK_Z - 0.5).edges("|Y").fillet(2))         # Nano USB-C
-    s = s.cut(box(10, 12, 5, 18, -D / 2, SPLIT_Z + 1.0).edges("|Y").fillet(1))       # slide switch
+    tx, tz = TOGGLE_XZ                                                                  # toggle switch (M6 nut)
+    s = s.cut(cq.Workplane("XZ").center(tx, tz).circle(3.25).extrude(-12).translate((0, -D / 2 - 2, 0)))
 
     # "pet me" dimple + touch-sensor cage under it
     s = s.cut(cq.Workplane("XY").sphere(34).translate((0, -2, Z_TOP + 34 - 1.4)))
@@ -136,8 +139,12 @@ def make_shell():
     # keep the face-plate lip zone free (lip sits just behind the front wall)
     s = s.cut(front_xz(FACE_W + 4 + 2 * TOL, FACE_H + 4 + 2 * TOL, FACE_R + 2, SCREEN_Z, 1.2 + TOL, IN_Y + 0.001))
 
-    for (bx, by) in BOSS:                               # screw bosses (M2 self-tapping)
-        s = s.union(cq.Workplane("XY").circle(3.2).circle(0.85).extrude(12).translate((bx, by, SPLIT_Z)))
+    for (bx, by) in BOSS:                               # screw bosses (M2 self-tapping), tied to the side wall
+        sx = 1 if bx > 0 else -1
+        rib = box(IN_X - abs(bx) + 1.0, 4.0, 12, sx * (abs(bx) + (IN_X - abs(bx) + 1.0) / 2), by, SPLIT_Z)
+        s = s.union(rib)
+        s = s.union(cq.Workplane("XY").circle(3.2).extrude(12).translate((bx, by, SPLIT_Z)))
+        s = s.cut(cq.Workplane("XY").circle(0.85).extrude(13).translate((bx, by, SPLIT_Z - 0.5)))
     return s
 
 
@@ -229,9 +236,6 @@ def make_chassis():
     c = c.union(box(TP4056[0] + 2, 1.2, 3, CH_X, CH_Y0 + TP4056[1] + TOL + 0.6, SPLIT_Z))
     c = c.union(box(1.2, TP4056[1] * 0.6, 3, CH_X + TP4056[0] / 2 + TOL + 0.6, CH_Y0 + TP4056[1] * 0.7, SPLIT_Z))
     c = c.union(bay(DRV[0] + 2, DRV[1] + 2, 3, 21.0, -21.6, SPLIT_Z))
-    # slide switch: two side blocks at the rear wall
-    for dx in (-1, 1):
-        c = c.union(box(2.0, 5.0, 5.0, 18 + dx * (SWITCH[0] / 2 + TOL + 1.0), -IN_Y + 3.0, SPLIT_Z))
 
     # battery shelf (above the caster hat), 3 posts + cantilever over the charger
     shelf_y0, shelf_y1 = -IN_Y + 0.8, -3.5
@@ -244,10 +248,15 @@ def make_chassis():
     # Nano: USB-C 0.6 mm from the rear wall, right behind the rear opening (cable plugs in from outside).
     deck_y0, deck_y1 = -IN_Y + 0.8, 22.0
     c = c.union(box(38, deck_y1 - deck_y0, 1.8, 0, (deck_y0 + deck_y1) / 2, DECK_Z - 1.8))
+    # Nano mounted UPSIDE DOWN (header pins up, Dupont plugs from above), resting on 4 corner
+    # pads that touch only the pin-free ends of the board; USB-C hangs below, at the opening.
     ny0, ny1 = -IN_Y + 0.6, -IN_Y + 0.6 + NANO[1]
-    for sx in (-1, 1):                                   # side rails, open at the rear
-        c = c.union(box(1.2, NANO[1] - 4, 2, sx * (NANO[0] / 2 + TOL + 0.6), (ny0 + ny1) / 2 + 2, DECK_Z))
-    c = c.union(box(NANO[0] + 2 * TOL + 2.4, 1.2, 2, 0, ny1 + TOL + 0.6, DECK_Z))        # front stop
+    for py in (ny0 + 1.5, ny1 - 1.5):
+        for sx in (-1, 1):
+            c = c.union(box(2.6, 2.4, NANO_PAD, sx * 7.4, py, DECK_Z))
+    for sx in (-1, 1):                                   # side guides outside the board
+        c = c.union(box(1.2, NANO[1] - 6, NANO_PAD + 2, sx * (NANO[0] / 2 + TOL + 0.6), (ny0 + ny1) / 2 + 2, DECK_Z))
+    c = c.union(box(NANO[0] + 2 * TOL + 2.4, 1.2, NANO_PAD + 2, 0, ny1 + TOL + 0.6, DECK_Z))   # front stop
     for (px, py) in ((15.5, -6), (-15.5, -6), (15.5, deck_y0 + 2), (-15.5, deck_y0 + 2)):
         c = c.union(box(2.5, 2.5, DECK_Z - 1.8 - BATT_SHELF_Z, px, py, BATT_SHELF_Z))
     for px in (15.5, -15.5):                             # front posts down to the floor
@@ -293,8 +302,12 @@ def make_parts():
 
     sy0 = -IN_Y + 0.8
     p["battery"] = (box(*BATT, 0, (sy0 - 3.5) / 2, BATT_SHELF_Z + 0.2), (0.85, 0.75, 0.25))
-    p["nano"] = (box(*NANO, 0, -IN_Y + 0.6 + NANO[1] / 2, DECK_Z + 0.2)
-                 .union(box(9.0, 7.5, 3.2, 0, -IN_Y + 0.6 + 3.75, DECK_Z + 1.8)), (0.0, 0.55, 0.6))
+    ncy = -IN_Y + 0.6 + NANO[1] / 2
+    nano = box(*NANO, 0, ncy, DECK_Z + NANO_PAD)                                   # board (flipped)
+    nano = nano.union(box(9.0, 7.5, 3.2, 0, -IN_Y + 0.6 + 3.75, DECK_Z + NANO_PAD - 3.2))   # USB-C below
+    for sx in (-1, 1):                                                             # header pins up
+        nano = nano.union(box(2.5, 38.1, 8.5, sx * 7.62, ncy, DECK_Z + NANO_PAD + 1.6))
+    p["nano"] = (nano, (0.0, 0.55, 0.6))
     p["charger"] = (box(TP4056[0], TP4056[1], 1.6, -21.2, -IN_Y + 0.9 + TP4056[1] / 2, SPLIT_Z + 0.2)
                     .union(box(9, 7.5, 3.2, -21.2, -IN_Y + 0.9 + 3.75, SPLIT_Z + 1.8)), (0.15, 0.3, 0.75))
     p["driver"] = (box(DRV[0], DRV[1], 1.6, 21.0, -21.6, SPLIT_Z + 0.2), (0.12, 0.12, 0.14))
@@ -307,8 +320,10 @@ def make_parts():
     bz = bz.union(cq.Workplane("XY").circle(BUZZER[2] / 2).extrude(BUZZER[3]).translate((bx - BUZZER[0] / 2 + 7, by, DECK_Z + 1.8)))
     bz = bz.union(box(2.6, 8, 11, bx + BUZZER[0] / 2 - 2, by, DECK_Z + 1.8))      # header pins
     p["buzzer"] = (bz, (0.12, 0.12, 0.14))
-    p["switch"] = (box(SWITCH[0], SWITCH[1], SWITCH[2], 18, -IN_Y + 2.5, SPLIT_Z + 1)
-                   .union(box(2, 3, 2, 18.5, -IN_Y - 0.5, SPLIT_Z + 1.8)), (0.25, 0.25, 0.28))
+    tx, tz = TOGGLE_XZ
+    tg = box(TOGGLE[0], TOGGLE[2] + TOGGLE[3], TOGGLE[1], tx, -IN_Y + (TOGGLE[2] + TOGGLE[3]) / 2 + 0.3, tz - TOGGLE[1] / 2)
+    tg = tg.union(cq.Workplane("XZ").center(tx, tz).circle(3.0).extrude(8).translate((0, -IN_Y, 0)))   # M6 bushing, outward
+    p["switch"] = (tg, (0.25, 0.25, 0.28))
     cliff = None
     for sx in (-1, 1):
         x0, x1 = CLIFF_X
@@ -336,10 +351,53 @@ def build():
     shell, chassis, face, wheel = make_shell(), make_chassis(), make_faceplate(), make_wheel()
     cap = make_motor_cap()
     parts = make_parts()
-    (OUT / "stl").mkdir(exist_ok=True)
     (OUT / "preview").mkdir(exist_ok=True)
-    for name, solid in (("shell", shell), ("chassis", chassis), ("faceplate", face), ("wheel", wheel), ("motor_cap", cap)):
-        cq.exporters.export(solid, str(OUT / "stl" / f"{name}.stl"), tolerance=0.04, angularTolerance=0.1)
+
+    # print-ready copies: each part laid in its print orientation, sitting on z = 0
+    pr = OUT / "print"
+    pr.mkdir(exist_ok=True)
+    def on_bed(solid):
+        bb = solid.val().BoundingBox()
+        return solid.translate((-(bb.xmin + bb.xmax) / 2, -(bb.ymin + bb.ymax) / 2, -bb.zmin))
+    printable = {
+        "1_coque": on_bed(shell),                                               # opening down
+        "2_chassis": on_bed(chassis),                                           # floor down
+        "3_facade_x2": on_bed(face.rotate((0, 0, 0), (1, 0, 0), 90)),           # front face down
+        "4_roue_x4": on_bed(wheel.rotate((0, 0, 0), (0, 1, 0), -90)),           # axis vertical
+        "5_capot_moteur_x3": on_bed(cap.rotate((0, 0, 0), (1, 0, 0), 180)),     # flat face down
+    }
+    for name, solid in printable.items():
+        cq.exporters.export(solid, str(pr / f"{name}.stl"), tolerance=0.03, angularTolerance=0.08)
+
+    # mesh clean-up (a sphere pole can leave a degenerate triangle) + ready-made plates
+    # for the FlashForge Dreamer bed (230 x 150 mm, origin at the centre of the bed)
+    try:
+        import trimesh
+        meshes = {}
+        for name in printable:
+            m = trimesh.load(str(pr / f"{name}.stl"))
+            m.update_faces(m.nondegenerate_faces()); m.merge_vertices(); m.remove_unreferenced_vertices()
+            trimesh.repair.fill_holes(m); trimesh.repair.fix_normals(m)
+            m.export(str(pr / f"{name}.stl"))
+            meshes[name] = m
+        def place(m, x, y):
+            c = m.copy(); b = c.bounds
+            c.apply_translation((x - (b[0][0] + b[1][0]) / 2, y - (b[0][1] + b[1][1]) / 2, -b[0][2]))
+            return c
+        plates = {
+            "PLATEAU_1_coque": [place(meshes["1_coque"], 0, 0)],
+            "PLATEAU_2_chassis_roues_capots": [place(meshes["2_chassis"], -45, 10)]
+                + [place(meshes["4_roue_x4"], 30 + 34 * (i % 2), 40 - 34 * (i // 2)) for i in range(4)]
+                + [place(meshes["5_capot_moteur_x3"], 22 + 26 * i, -50) for i in range(3)],
+            "PLATEAU_3_facades_noir": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
+        }
+        for name, pieces in plates.items():
+            combo = trimesh.util.concatenate(pieces)
+            lo, hi = combo.bounds
+            assert -115 <= lo[0] and hi[0] <= 115 and -75 <= lo[1] and hi[1] <= 75 and hi[2] <= 140, name
+            combo.export(str(pr / f"{name}.stl"))
+    except ImportError:
+        print("trimesh not installed: plates not generated")
 
     assy = cq.Assembly(name="robot")
     assy.add(shell, name="shell", color=cq.Color(0.96, 0.93, 0.88))
