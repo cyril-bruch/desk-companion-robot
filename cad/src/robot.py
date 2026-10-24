@@ -407,7 +407,7 @@ def build():
                 + [place(meshes["5_capot_moteur_x3"], 22 + 26 * i, -50) for i in range(3)]
                 + [place(meshes["6_patin_arriere_x2"], 100, 40 - 34 * i) for i in range(2)]
                 + [place(meshes["6b_patin_pour_feutre_2mm"], 100, -28)],
-            "PLATEAU_3_facades_noir": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
+            "PLATEAU_3_facades": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
         }
         for name, pieces in plates.items():
             combo = trimesh.util.concatenate(pieces)
