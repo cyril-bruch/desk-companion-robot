@@ -53,7 +53,7 @@ Les positions correspondent au modèle 3D (`cad/src/robot.py`) — clique sur un
 | **Étagère batterie** | 19,5 mm | batterie 1000 mAh (arrière) |
 | **Plateau Nano** | 35 mm | Arduino Nano R4 **à l'envers (broches vers le haut)**, USB-C juste derrière l'ouverture arrière · module buzzer (38 × 13 mm) à l'avant du plateau |
 | **Paroi arrière, en haut à droite** | 47 mm | interrupteur à levier MTS-102 (écrou M6) |
-| **Coque, face avant** | 37–72 mm | façade noire + écran OLED glissé dans ses guides |
+| **Coque, face avant** | 37–72 mm | façade rose + écran OLED glissé dans ses guides (par le bas) |
 | **Coque, dessus** | ~78 mm | capteur de caresse collé dans sa cage sous le creux |
 
 Arrière du robot : **port de charge USB-C** (bas gauche) · **port de programmation Nano** (milieu) · **interrupteur** (haut droite).
@@ -157,11 +157,18 @@ moteurs → capteurs anti-chute → capteur de caresse → buzzer → écran.
 7. **Interrupteur** : dans le trou en haut à droite de la coque, écrou serré (fils assez longs pour ouvrir la coque).
 8. **Câblage** selon le tableau, puis **test complet coque ouverte** : charge (LED rouge/verte), 7,5 V sur VIN,
    deploy Simulink, chaque capteur, buzzer.
-9. **Coque** : façade collée par l'intérieur, écran glissé par le haut dans ses guides, capteur de caresse collé dans sa cage.
+9. **Coque** : façade collée par l'intérieur, puis **écran glissé par le bas** : coque tenue debout, l'écran passe par
+   l'ouverture du dessous, vitre vers l'avant, broches vers l'arrière, et remonte entre les deux rails latéraux (derrière
+   la façade, devant les petites butées arrière). Le placer pour que la zone noire soit centrée dans la fenêtre
+   (bas de la carte à ≈ 31 mm du bord inférieur de la coque), puis le **bloquer avec 2 morceaux de scotch d'électricien**
+   en bas, de la carte vers chaque rail (ou un point de colle). Capteur de caresse collé dans sa cage.
 10. **Fermeture** : brancher écran et caresse, descendre la coque, **4 vis M2** par-dessous.
 
 ---
 
 ## 7. Points encore ouverts (à vérifier à réception, sans impact sur l'impression)
+- **Écran (constaté sur la v1 imprimée)** : il ne peut pas entrer par le haut (le plafond arrondi bloque) et le rebord du bas
+  ne le retient presque pas (encoche trop large). Il entre par le bas et se bloque au scotch. À corriger en v1.1 : petite
+  cale imprimée qui se clipse sous l'écran.
 - Cotes non publiées (chargeur, driver, MT3608, module buzzer) : emplacements larges + double face.
 - Capteurs TCRT5000 (lot Amazon, 32 × 14 mm) : œil côté extérieur, sensibilité réglée au potentiomètre (voir `bom.md`).
