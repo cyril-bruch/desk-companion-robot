@@ -82,7 +82,7 @@ Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chut
 
 | Composant | Broche composant | → | Nano R4 | Comment le brancher |
 |---|---|---|---|---|
-| Écran OLED | VCC / GND / SCL / SDA | → | 5V / GND / **A5** / **A4** | Dupont. ⚠️ lire l'ordre imprimé sur la carte |
+| Écran OLED | VCC / GND / SCL / SDA | → | 5V / GND / **A5** / **A4** | **fils soudés** sur les broches coupées à 3 mm (sinon l'écran ne passe pas dans ses rails), Dupont femelle côté Nano. ⚠️ noter l'ordre imprimé avant de couper |
 | Driver DRV8833 | IN1 / IN2 | → | **D5** / **D6** | moteur gauche — **fils soudés** sur le driver |
 | | IN3 / IN4 | → | **D9** / **D10** | moteur droit |
 | | VCC / GND | → | 7,5 V / GND | |
