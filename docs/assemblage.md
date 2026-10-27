@@ -64,9 +64,9 @@ Arrière du robot : **port de charge USB-C** (bas gauche) · **port de programma
 
 ```
 Batterie 3,7 V ──► TP4056 B+ / B-                    ◄── câble USB-C (recharge)
-                   TP4056 OUT+ ──► interrupteur MTS-102 ──► MT3608 IN+ ──► 7,5 V ──┬──► Nano VIN
-                        │                                                         └──► DRV8833 VCC
-                        └──────────────► Nano A0 (niveau de batterie)
+                   TP4056 OUT+ ──► interrupteur MTS-102 ──┬──► MT3608 IN+ ──► 7,5 V ──┬──► Nano VIN
+                                                          │                           └──► DRV8833 VCC
+                                                          └──► Nano A0 (niveau de batterie)
                    TP4056 OUT- ══════════ GND COMMUN (MT3608 IN-/OUT-, Nano GND, tous les modules)
 Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chute, module buzzer
 ```
@@ -92,7 +92,7 @@ Nano 5V (sortie) ──► écran OLED, capteur de caresse, 2 capteurs anti-chut
 | Capteur de caresse | SIG / VCC / GND | → | **D2** / 5V / GND | Dupont |
 | Module buzzer | I/O / VCC / GND | → | **D3** / 5V / GND | Dupont. Actif au niveau bas : **au repos, D3 = HIGH** |
 | MT3608 | OUT+ / OUT- | → | **VIN** / GND | fils soudés |
-| Batterie (après interrupteur) | OUT+ du TP4056 | → | **A0** | fil soudé côté TP4056 |
+| Batterie (**après** l'interrupteur) | borne de sortie de l'interrupteur (côté MT3608 IN+) | → | **A0** | fil soudé sur l'interrupteur. ⚠️ **jamais avant l'interrupteur** : robot éteint, la batterie alimenterait la Nano par A0 |
 
 Utilisées : D2, D3, D5–D10, A0, A4, A5. **Libres pour la suite : D4, D11, D12, D13, A1, A2, A3.**
 
