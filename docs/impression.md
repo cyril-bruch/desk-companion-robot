@@ -17,6 +17,7 @@ Chaque plateau s'imprime **d'une seule couleur** : pas besoin d'impression bicol
 | `PLATEAU_1_coque.stl` | la coque | **blanc** | ~6 h |
 | `PLATEAU_2_chassis_roues_capots.stl` | plancher + 4 roues + 3 capots moteurs + 3 patins | **rose** | ~4 h 45 |
 | `PLATEAU_3_facades.stl` | 2 façades (le cadre autour de l'écran) | **rose** | ~25 min |
+| `PLATEAU_4_roues_sans_supports.stl` | 4 roues seules (2 + 2 de rechange) — **SANS supports, SANS bordure** | **rose** | ~45 min |
 
 Résultat : un robot **blanc avec un visage rose et des roues roses**. L'écran reste noir derrière la façade, on ne voit que les yeux.
 \* estimation ; FlashPrint donne la durée exacte.
@@ -26,6 +27,10 @@ une par une, pour réimprimer une pièce ratée. Les roues, capots et patins son
 Le patin « pour feutre » est 2 mm plus bas : il ne sert que si tu colles un jour un patin de feutre de 2 mm dessous.
 
 ---
+
+> ⚠️ **Roues** : sur le plateau 2, les supports automatiques remplissent les gorges des roues (impossible à nettoyer).
+> Imprimer les roues avec le **plateau 4**, sans supports : le seul porte-à-faux est le plafond des gorges (1,5 mm),
+> que l'imprimante fait très bien toute seule. Les roues du plateau 2 peuvent être jetées.
 
 ## 2. Installer FlashPrint 5 (une seule fois, sur ton PC)
 1. Site officiel **flashforge.com** → *Support* → *Download* (centre de téléchargement) → **FlashPrint 5**, dernière version,
@@ -115,6 +120,14 @@ Les **3 fichiers `.gx`** + ce petit mot :
 - **Roues** : nettoyer les **deux gorges** (le cutter suffit) pour que les joints toriques s'y logent bien.
 - Vérifier que les 4 colonnes de vis de la coque et les trous des capots ne sont pas bouchés (foret de 1,5 mm à la main sinon).
 - La façade se met **par l'intérieur** de la coque : elle tient par son rebord, un point de colle si besoin.
+
+## Plateau 4 : les roues seules
+Même profil « Robot PLA », avec seulement 3 changements :
+- **Supports : désactivés** (ne pas cliquer sur Auto Supports ; si des supports sont déjà là : *Effacer Supports*).
+- **Ajouts → Activer la Corniche (bordure) : Disable** : le dessous des roues est un disque plein qui colle très bien,
+  et une bordure laisserait une collerette à couper juste au bord de la gorge.
+- Tête : celle du **rose**.
+Si le plafond des gorges sort un peu « baveux », ce n'est pas grave : un coup de cutter, le joint torique le cache.
 
 ## Roue de test (déjà faite le 24/10 ✅)
 La roue imprimée passe les deux tests (taille et trou de l'axe) : pas de correction à faire.

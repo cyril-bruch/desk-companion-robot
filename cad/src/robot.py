@@ -408,6 +408,8 @@ def build():
                 + [place(meshes["6_patin_arriere_x2"], 100, 40 - 34 * i) for i in range(2)]
                 + [place(meshes["6b_patin_pour_feutre_2mm"], 100, -28)],
             "PLATEAU_3_facades": [place(meshes["3_facade_x2"], x, 0) for x in (-28, 28)],
+            # wheels alone, printed WITHOUT supports (the only overhangs are the 1.5 mm groove ceilings)
+            "PLATEAU_4_roues_sans_supports": [place(meshes["4_roue_x4"], 20 * (2 * (i % 2) - 1), 20 * (2 * (i // 2) - 1)) for i in range(4)],
         }
         for name, pieces in plates.items():
             combo = trimesh.util.concatenate(pieces)
