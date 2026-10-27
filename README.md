@@ -41,12 +41,13 @@ WANDER: random walk; edge detected -> back up + turn
 ## Credits
 | Part | Author |
 |---|---|
-| Simulink / Stateflow models, hardware integration, testing | Cyril Bruch |
+| Simulink / Stateflow models (behaviour, sensors, actuators), hardware integration, debugging, testing | Cyril Bruch |
 | 3D mechanical design | AI-generated (Claude), printed and assembled by Cyril |
+| Visual design: eye expressions & animations, sounds (OLED and buzzer driver blocks, C++ via IO Device Builder) | AI-generated (Claude), integrated into the model by Cyril |
 | Component selection & wiring | AI-proposed, validated and built by Cyril |
 
-The mechanical design was deliberately delegated in order to focus on the
-Model-Based Design workflow.
+The mechanical and visual design were deliberately delegated in order to focus on the
+Model-Based Design workflow: the behaviour logic and the Simulink models are not AI-generated.
 
 ## Roadmap
 - [x] Requirements & bill of materials
