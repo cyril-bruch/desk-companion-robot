@@ -1,0 +1,584 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Câblage du robot de maman</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: harness drawing on a pale drafting sheet; detail panel beside it; then build order, wire list, tests. */
+:root {
+  --bg: #eef1f2; --sheet: #fbfcfc; --ink: #1c2629; --muted: #5d6b70; --rule: #cfd8db; --band: #e4eaec;
+  --accent: #c8336f; --accent-soft: #f6dbe6;
+  --w-batt: #d23a32; --w-5v: #c2408f; --w-gnd: #2f3538; --w-sig: #c79300; --w-i2c: #2b74c4; --w-mot: #23905f; --w-a0: #e0701a;
+  --ok: #23905f; --todo: #c8336f;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111719; --sheet: #172023; --ink: #e3eaec; --muted: #93a3a8; --rule: #2c393d; --band: #1c272a;
+  --accent: #f0699d; --accent-soft: #3a1f2b;
+  --w-batt: #f0564d; --w-5v: #e46bb3; --w-gnd: #b9c4c8; --w-sig: #e8b81c; --w-i2c: #5ea3ee; --w-mot: #3fc188; --w-a0: #f68f3c;
+  --ok: #3fc188; --todo: #f0699d; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111719; --sheet: #172023; --ink: #e3eaec; --muted: #93a3a8; --rule: #2c393d; --band: #1c272a;
+  --accent: #f0699d; --accent-soft: #3a1f2b;
+  --w-batt: #f0564d; --w-5v: #e46bb3; --w-gnd: #b9c4c8; --w-sig: #e8b81c; --w-i2c: #5ea3ee; --w-mot: #3fc188; --w-a0: #f68f3c;
+  --ok: #3fc188; --todo: #f0699d; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: flex; flex-direction: column; gap: 36px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(30px, 4vw, 44px); font-weight: 700; letter-spacing: .01em; }
+h2 { font-size: 26px; font-weight: 600; }
+h3 { font-size: 19px; font-weight: 600; }
+p { margin: 0; }
+.lede { max-width: 70ch; color: var(--muted); margin-top: 8px; }
+.eyebrow { font-family: var(--f-display); text-transform: uppercase; letter-spacing: .12em; font-size: 13px; color: var(--accent); font-weight: 600; }
+header { display: flex; flex-direction: column; gap: 6px; }
+.rule-box { border-left: 3px solid var(--accent); background: var(--sheet); padding: 12px 16px; max-width: 80ch; border-radius: 0 6px 6px 0; }
+.rule-box strong { color: var(--accent); }
+
+/* toolbar */
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: 600 13px var(--f-body); border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); border-radius: 999px; padding: 5px 12px 5px 10px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.chip .sw { width: 18px; height: 4px; border-radius: 2px; }
+.chip[aria-pressed="false"] { opacity: .45; }
+.chip:focus-visible, button:focus-visible, .stage:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toolbar .sep { width: 1px; height: 22px; background: var(--rule); margin: 0 4px; }
+.toggle { font: 500 13px var(--f-body); color: var(--muted); display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+
+/* drawing + panel */
+.board { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1320px) { .board { grid-template-columns: minmax(0, 1fr) 340px; } }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto; }
+svg#map { display: block; width: 100%; min-width: 980px; height: auto; font-family: var(--f-body); }
+.band-bg { fill: var(--band); }
+.band-label { font: 700 13px var(--f-display); letter-spacing: .14em; fill: var(--muted); text-transform: uppercase; }
+.band-note { font: 500 11px var(--f-body); fill: var(--muted); }
+.comp rect.body { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.4; }
+.comp.hub circle { fill: var(--sheet); stroke-width: 2.5; }
+.comp text.name { font: 600 15px var(--f-display); fill: var(--ink); }
+.comp text.sub { font: 400 11px var(--f-body); fill: var(--muted); }
+.comp { cursor: pointer; }
+.comp:hover rect.body { stroke: var(--accent); }
+.comp.sel rect.body, .comp.sel circle { stroke: var(--accent); stroke-width: 2.6; }
+.pin { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.2; }
+.pin-label { font: 600 10px var(--f-mono); fill: var(--ink); }
+.pin-label.dim { fill: var(--muted); font-weight: 400; }
+.wire { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; transition: opacity .15s; }
+.wire-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.wire.done { stroke-dasharray: none; }
+.wire.todo { stroke-dasharray: 9 5; }
+.tag rect { fill: var(--sheet); stroke-width: 1.2; }
+.tag text { font: 600 10px var(--f-mono); }
+.tag { cursor: pointer; }
+svg.focus .wire-g { opacity: .12; }
+svg.focus .wire-g.on { opacity: 1; }
+svg.focus .wire-g.on .wire { stroke-width: 4.5; }
+.wire-g.hidden { display: none; }
+@media (prefers-reduced-motion: reduce) { .wire { transition: none; } }
+
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 12px; align-self: start; min-width: 0; }
+@media (min-width: 1320px) { .panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
+.panel .empty { color: var(--muted); }
+.panel .id { font: 600 13px var(--f-mono); padding: 2px 8px; border-radius: 4px; color: #fff; display: inline-block; }
+.kv { display: grid; grid-template-columns: 92px minmax(0,1fr); gap: 6px 12px; font-size: 14px; }
+.kv dt { color: var(--muted); font-size: 13px; }
+.kv dd { margin: 0; }
+.len { font: 600 22px var(--f-mono); }
+.state { font: 600 12px var(--f-body); text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; display: inline-block; }
+.state.ok { color: var(--ok); } .state.todo { color: var(--todo); }
+.note { background: var(--accent-soft); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
+.panel ul { margin: 0; padding-left: 18px; }
+.panel li { margin: 2px 0; }
+.linkish { background: none; border: 0; color: var(--accent); font: inherit; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+
+/* stages */
+.stages { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.stage { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.stage:hover { border-color: var(--accent); }
+.stage.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.stage .n { font: 700 34px var(--f-display); color: var(--accent); line-height: 1; }
+.stage .head { display: flex; gap: 12px; align-items: baseline; }
+.stage ol, .stage ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.stage .mount { font-size: 13px; border-top: 1px dashed var(--rule); padding-top: 8px; color: var(--muted); }
+.stage .mount b { color: var(--ink); }
+.stage.donestage .n { color: var(--ok); }
+
+/* table */
+.tablewrap { overflow-x: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 600 12px var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--band); position: sticky; top: 0; }
+td.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr { cursor: pointer; }
+tr:hover td { background: var(--band); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* tests */
+.tests { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.test { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.test label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-weight: 600; }
+.test input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.test .when { font: 600 11px var(--f-body); text-transform: uppercase; letter-spacing: .1em; color: var(--accent); }
+.test p, .test ol { font-size: 14px; color: var(--ink); }
+.test ol { margin: 0; padding-left: 18px; }
+.test.checked { opacity: .6; }
+.test .expect { font-size: 13px; color: var(--muted); }
+.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.card ul { margin: 0; padding-left: 18px; font-size: 14px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+code { font-family: var(--f-mono); font-size: 13px; background: var(--band); padding: 1px 5px; border-radius: 3px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Robot de bureau · v1 · Arduino Nano R4</span>
+    <h1>Câblage du robot</h1>
+    <p class="lede">Chaque boîte est un composant, rangé dans sa zone du robot : la coque, le pont où est posée la Nano, ou le plancher. Chaque trait est un fil. Clique sur un fil ou un composant pour voir sa longueur, ce qu'il faut à chaque bout et à quelle étape le faire. Les traits pleins sont déjà faits, les pointillés restent à faire.</p>
+  </header>
+
+  <div class="rule-box"><strong>La règle qui évite de dessouder :</strong> avant de souder un fil, pose les deux composants à leur place, fais passer le fil par son vrai chemin, laisse 2 cm de marge, et seulement ensuite coupe et soude. Pour un fil qui part de la coque, ajoute 10 cm de mou pour pouvoir la soulever.</div>
+
+  <section>
+    <div class="toolbar" id="toolbar" role="group" aria-label="Familles de fils"></div>
+    <div class="board">
+      <div class="sheet"><svg id="map" viewBox="0 0 1240 900" role="img" aria-label="Schéma de câblage du robot, par zone"></svg></div>
+      <aside class="panel" id="panel" aria-live="polite">
+        <span class="eyebrow">Détail</span>
+        <p class="empty">Clique sur un fil, une étiquette ou un composant.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section>
+    <div><span class="eyebrow">Dans l'ordre</span><h2>Quand souder et quand monter</h2></div>
+    <p class="lede" style="margin-top:0">Clique sur une étape pour allumer ses fils sur le schéma. Pour chaque étape : ce que tu soudes sur la table, puis ce que tu montes dans le robot.</p>
+    <div class="stages" id="stages"></div>
+  </section>
+
+  <section>
+    <div><span class="eyebrow">Tests et réglages</span><h2>Ce qu'il faut vérifier, et comment</h2></div>
+    <p class="lede" style="margin-top:0">Coche au fur et à mesure (les coches restent sur cet appareil).</p>
+    <div class="tests" id="tests"></div>
+  </section>
+
+  <section>
+    <div><span class="eyebrow">Liste complète</span><h2>Tous les fils</h2></div>
+    <div class="tablewrap"><table id="wtable"><thead><tr><th>Fil</th><th>De</th><th>Vers</th><th>Longueur</th><th>Bout 1</th><th>Bout 2</th><th>Étape</th><th>État</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section>
+    <div><span class="eyebrow">À savoir</span><h2>Pièces imprimées et modules</h2></div>
+    <div class="cols2">
+      <div class="card"><h3>Capots des moteurs</h3><ul>
+        <li>Le côté avec le renfort se pose <b>contre le moteur</b> : c'est lui qui le cale.</li>
+        <li><b>Les 2 vis extérieures suffisent.</b> Les 2 du centre sont inaccessibles avec un tournevis, c'est une erreur de ma conception (corrigée pour la v1.1).</li>
+      </ul></div>
+      <div class="card"><h3>Prises Dupont</h3><ul>
+        <li>Pour un fil « soudé / prise », prends un câble Dupont femelle-femelle <b>un peu plus long</b> que la longueur voulue (10, 20 ou 30 cm), coupe une seule prise et ajuste la longueur côté soudure.</li>
+        <li>Pour tester une prise au voltmètre : enfonce un bout de fil dénudé dedans et pose la pointe dessus.</li>
+      </ul></div>
+      <div class="card"><h3>Épissures (5V et GND)</h3><ul>
+        <li>Enfile la gaine, dénude 8 mm de chaque fil, torsade-les tous ensemble, soude, rabats et chauffe la gaine.</li>
+        <li>Elles restent posées sur le pont, à côté de la Nano. Mets une étiquette « 5V » sur l'une pour ne pas les confondre.</li>
+      </ul></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('map');
+
+/* ---------- families ---------- */
+const FAM = {
+  batt: { label: 'Batterie et 7,5 V', color: 'var(--w-batt)' },
+  v5:   { label: '5 V des modules', color: 'var(--w-5v)' },
+  gnd:  { label: 'Masse (GND)', color: 'var(--w-gnd)' },
+  mot:  { label: 'Moteurs et commande', color: 'var(--w-mot)' },
+  sig:  { label: 'Signaux capteurs', color: 'var(--w-sig)' },
+  i2c:  { label: 'Écran (I2C)', color: 'var(--w-i2c)' },
+  a0:   { label: 'Mesure batterie (A0)', color: 'var(--w-a0)' }
+};
+
+/* ---------- components: x, y, w, h, pins {name: [x, y, side]} ---------- */
+const C = {
+  sw:   { name: 'Interrupteur', sub: 'MTS-102', zone: 'coque', x: 80, y: 62, w: 170, h: 88,
+          where: 'Coque, paroi arrière en haut à droite. Il se visse avec son écrou dans le trou de 6,5 mm.',
+          tip: 'La patte du milieu (COM) reçoit le + du chargeur. La patte « ON » est celle qui touche COM quand le levier est sur ON : vérifie au bip avant de souder. La 3e patte reste vide.',
+          pins: { ON: [115, 150, 'b'], COM: [165, 150, 'b'], '—': [215, 150, 'b'] } },
+  ttp:  { name: 'Capteur de caresse', sub: 'TTP223', zone: 'coque', x: 410, y: 62, w: 170, h: 88,
+          where: 'Coque, dans la petite cage collée sous le creux du dessus.',
+          tip: 'L\'ordre des 3 broches change selon les modules : lis les noms écrits sur la carte (VCC, GND, I/O ou SIG). Coupe les broches à 3 mm et soude les fils directement.',
+          pins: { VCC: [445, 150, 'b'], GND: [495, 150, 'b'], SIG: [545, 150, 'b'] } },
+  oled: { name: 'Écran OLED', sub: 'SH1106 1,3"', zone: 'coque', x: 700, y: 50, w: 210, h: 105,
+          where: 'Coque, derrière la façade : il entre par l\'ouverture du dessous, vitre vers l\'avant, et se bloque avec 2 morceaux de scotch.',
+          tip: 'Broches coupées à 3 mm, fils soudés directement (pas de prise : pas la place). Soude les 4 fils + les 2 fils qui partent vers la caresse avant de glisser l\'écran.',
+          pins: { GND: [735, 155, 'b'], VCC: [780, 155, 'b'], SCK: [825, 155, 'b'], SDA: [870, 155, 'b'] } },
+  buz:  { name: 'Buzzer', sub: 'passif', zone: 'pont', x: 70, y: 300, w: 150, h: 112,
+          where: 'Pont, juste devant la Nano, dans son petit cadre (double-face).',
+          tip: 'Il a des broches : tous ses fils se branchent avec une prise femelle.',
+          pins: { VCC: [220, 330, 'r'], GND: [220, 360, 'r'], 'I/O': [220, 390, 'r'] } },
+  nano: { name: 'Arduino Nano R4', sub: 'posée à l\'envers, broches vers le haut', zone: 'pont', x: 430, y: 280, w: 470, h: 150, tpos: [665, 350, 'middle'],
+          where: 'Pont (étage du haut), à l\'envers sur ses 4 plots, poussée contre la paroi arrière : son USB-C est en face de l\'ouverture arrière.',
+          tip: 'Sur le schéma les broches sont rangées pour que les fils ne se croisent pas : lis toujours le nom écrit à côté de la broche. VIN, 5V et une GND sont au bout opposé à l\'USB ; A0 est près de l\'USB. Il y a 2 broches GND : une pour le MT3608, une pour l\'épissure GND.',
+          pins: { A0: [480, 280, 't'], D11: [560, 280, 't'], A4: [650, 280, 't'], A5: [720, 280, 't'],
+                  D3: [430, 390, 'l'],
+                  '5V': [455, 430, 'b'], 'GND ': [500, 430, 'b'], VIN: [560, 430, 'b'], GND: [600, 430, 'b'],
+                  D10: [650, 430, 'b'], D9: [695, 430, 'b'], D6: [740, 430, 'b'], D5: [785, 430, 'b'], D8: [830, 430, 'b'], D7: [870, 430, 'b'] } },
+  h5:   { name: 'Épissure 5V', hub: true, fam: 'v5', zone: 'pont', x: 300, y: 478, r: 15,
+          where: 'Sur le pont, à côté de la Nano, sous gaine thermo.',
+          tip: '5 fils soudés ensemble : Nano 5V, buzzer, EEP du driver, anti-chute, écran. Fais-la en dernier, quand tous les fils sont arrivés.',
+          pins: { '': [300, 478, 'c'] } },
+  hg:   { name: 'Épissure GND', hub: true, fam: 'gnd', zone: 'pont', x: 365, y: 478, r: 15,
+          where: 'Sur le pont, à côté de la Nano, sous gaine thermo.',
+          tip: '4 fils soudés ensemble : Nano GND, buzzer, anti-chute, écran.',
+          pins: { '': [365, 478, 'c'] } },
+  tp:   { name: 'Chargeur', sub: 'TP4056 USB-C', zone: 'plancher', x: 60, y: 580, w: 170, h: 140,
+          where: 'Plancher, arrière gauche : glissé par la gauche, son USB-C contre l\'ouverture du bas.',
+          tip: 'Toutes les masses partent de OUT−, jamais de B−. Recharge toujours robot éteint.',
+          pins: { 'OUT+': [230, 610, 'r'], 'OUT−': [230, 650, 'r'], 'B+': [110, 720, 'b'], 'B−': [170, 720, 'b'] } },
+  bat:  { name: 'Batterie LiPo', sub: '3,7 V 1000 mAh', zone: 'plancher', x: 60, y: 772, w: 170, h: 62, tpos: [72, 812, 'start'],
+          where: 'Sur l\'étagère au-dessus du chargeur et du driver (elle passe en l\'inclinant).',
+          tip: 'Ne jamais mettre les deux fils en contact. Soude-les un par un, en gardant l\'autre isolé.',
+          pins: { '+': [110, 772, 't'], '−': [170, 772, 't'] } },
+  mt:   { name: 'MT3608', sub: 'réglé à 7,54 V', zone: 'plancher', x: 330, y: 580, w: 190, h: 110, tpos: [425, 622, 'middle'],
+          where: 'Collé à plat sur les 2 plaques des capteurs anti-chute, à l\'avant (il les chevauche).',
+          tip: 'Dans le trou VOUT+ il y a 2 fils (Nano VIN et driver VCC), pareil pour VOUT−. C\'est voulu.',
+          pins: { 'VIN+': [330, 610, 'l'], 'VIN−': [330, 650, 'l'], 'VOUT+': [520, 610, 'r'], 'VOUT−': [520, 650, 'r'] } },
+  drv:  { name: 'Driver moteurs', sub: 'DRV8833', zone: 'plancher', x: 640, y: 560, w: 200, h: 200, tpos: [742, 664, 'middle'],
+          where: 'Plancher, arrière droit, sous l\'étagère de la batterie (double-face, puce vers le haut).',
+          tip: 'EEP doit recevoir 5 V, sinon les moteurs ne tournent pas. ULT reste vide. Jamais de 7,5 V sur EEP.',
+          pins: { VCC: [640, 610, 'l'], GND: [640, 650, 'l'], EEP: [640, 715, 'l'], ULT: [640, 740, 'l'],
+                  IN1: [670, 560, 't'], IN2: [715, 560, 't'], IN3: [760, 560, 't'], IN4: [805, 560, 't'],
+                  OUT1: [840, 595, 'r'], OUT2: [840, 620, 'r'], OUT3: [840, 695, 'r'], OUT4: [840, 720, 'r'] } },
+  mg:   { name: 'Moteur G', sub: 'N20', zone: 'plancher', x: 930, y: 573, w: 120, h: 68, noPinLabels: true,
+          where: 'Plancher, berceau gauche, cosses vers le centre, capot vissé.',
+          tip: 'S\'il tourne à l\'envers : ne dessoude rien, mets dirLeft = -1 dans params.m.',
+          pins: { a: [930, 595, 'l'], b: [930, 620, 'l'] } },
+  md:   { name: 'Moteur D', sub: 'N20', zone: 'plancher', x: 930, y: 673, w: 120, h: 68, noPinLabels: true,
+          where: 'Plancher, berceau droit, cosses vers le centre, capot vissé.',
+          tip: 'S\'il tourne à l\'envers : mets dirRight = -1 dans params.m.',
+          pins: { a: [930, 695, 'l'], b: [930, 720, 'l'] } },
+  acg:  { name: 'Anti-chute G', sub: 'TCRT5000 · D8', zone: 'plancher', x: 630, y: 800, w: 190, h: 72, tpos: [642, 846, 'start'],
+          where: 'Sous la plaque avant gauche, composants vers le bas, l\'œil juste au-dessus de la fenêtre du plancher.',
+          tip: 'Fils soudés directement (pas la hauteur pour une prise). Soude-les AVANT de le scotcher sous sa plaque. AO reste vide.',
+          pins: { VCC: [660, 800, 't'], GND: [705, 800, 't'], DO: [790, 800, 't'] } },
+  acd:  { name: 'Anti-chute D', sub: 'TCRT5000 · D7', zone: 'plancher', x: 880, y: 800, w: 190, h: 72, tpos: [892, 846, 'start'],
+          where: 'Sous la plaque avant droite, composants vers le bas, l\'œil au-dessus de la fenêtre.',
+          tip: 'Ses VCC et GND viennent du capteur gauche : 2 fils dans le même trou côté gauche. AO reste vide.',
+          pins: { VCC: [910, 800, 't'], GND: [955, 800, 't'], DO: [1040, 800, 't'] } }
+};
+
+/* ---------- wires ---------- */
+// [id, fam, [comp,pin], [comp,pin], length, end1, end2, stage, done, note, via[]]
+const W = [
+  ['A1','batt',['bat','+'],['tp','B+'],'fil d\'origine, coupé à 6 cm','soudé','soudé',4,false,'Rouge de la batterie sur B+.',[]],
+  ['A2','gnd',['bat','−'],['tp','B−'],'fil d\'origine, coupé à 6 cm','soudé','soudé',4,false,'Noir de la batterie sur B−. B− ne sert qu\'à la batterie.',[]],
+  ['A3','batt',['tp','OUT+'],['sw','COM'],'20 cm','soudé','soudé',4,false,'Le bout côté interrupteur se soude à l\'étape 5. 10 cm de mou pour soulever la coque.',[[252,600],[252,250],[172,182]],0.62],
+  ['A4','batt',['sw','ON'],['mt','VIN+'],'30 cm','soudé','soudé',5,false,'C\'est ton fil test rouge de VIN+ : coupe sa prise et rallonge-le (épissure à 2 fils) jusqu\'à 30 cm.',[[110,190],[50,250],[50,525],[290,545],[312,600]]],
+  ['A5','gnd',['tp','OUT−'],['mt','VIN−'],'14 cm','soudé','soudé',4,false,'C\'est ton fil test noir de VIN− : coupe sa prise, rallonge-le à 14 cm et soude-le sur OUT−.',[]],
+  ['A6','batt',['mt','VOUT+'],['nano','VIN'],'10 cm','soudé','prise',1,true,'Déjà soudé dans le trou VOUT+.',[[548,600],[570,490],[560,455]]],
+  ['A7','gnd',['mt','VOUT−'],['nano','GND'],'10 cm','soudé','prise',1,true,'Déjà soudé dans le trou VOUT−. Sur la GND à côté de VIN.',[[560,645],[600,500],[600,455]]],
+  ['A8','batt',['mt','VOUT+'],['drv','VCC'],'15 cm','soudé','soudé',1,true,'2e fil dans le trou VOUT+.',[]],
+  ['A9','gnd',['mt','VOUT−'],['drv','GND'],'15 cm','soudé','soudé',1,true,'2e fil dans le trou VOUT−.',[]],
+  ['A10','a0',['sw','ON'],['nano','A0'],'15 cm','soudé','prise',5,false,'2e fil sur la patte ON, à côté du fil A4. Toujours APRÈS l\'interrupteur, sinon la batterie alimente la Nano robot éteint. Mesure-le (test 5) avant de le brancher.',[[140,205],[470,232]]],
+  ['M1','mot',['drv','OUT1'],['mg','a'],'fil du moteur','soudé','soudé',1,true,'Moteur gauche.',[]],
+  ['M2','mot',['drv','OUT2'],['mg','b'],'fil du moteur','soudé','soudé',1,true,'Moteur gauche.',[]],
+  ['M3','mot',['drv','OUT3'],['md','a'],'fil du moteur','soudé','soudé',1,true,'Moteur droit.',[]],
+  ['M4','mot',['drv','OUT4'],['md','b'],'fil du moteur','soudé','soudé',1,true,'Moteur droit.',[]],
+  ['C1','mot',['drv','IN1'],['nano','D10'],'20 cm','soudé','prise',1,true,'Étiquette « D10 ».',[]],
+  ['C2','mot',['drv','IN2'],['nano','D9'],'20 cm','soudé','prise',1,true,'Étiquette « D9 ».',[]],
+  ['C3','mot',['drv','IN3'],['nano','D6'],'20 cm','soudé','prise',1,true,'Étiquette « D6 ».',[]],
+  ['C4','mot',['drv','IN4'],['nano','D5'],'20 cm','soudé','prise',1,true,'Étiquette « D5 ».',[]],
+  ['V1','v5',['nano','5V'],['h5',''],'8 cm','prise','épissure',6,false,'Câble Dupont 10 cm, une prise coupée.',[]],
+  ['V2','v5',['buz','VCC'],['h5',''],'8 cm','prise','épissure',6,false,'Câble Dupont 10 cm, une prise coupée.',[[262,340]]],
+  ['V3','v5',['drv','EEP'],['h5',''],'fil déjà soudé (20 cm)','soudé','épissure',6,false,'Ton fil « EEP → 5V » : coupe sa prise et mets-le dans l\'épissure 5V.',[[608,715],[560,760],[285,760],[282,520]]],
+  ['V4','v5',['acg','VCC'],['h5',''],'20 cm','soudé','épissure',3,false,'Soudé sur le capteur gauche à l\'étape 3, l\'autre bout attend l\'épissure.',[[660,782],[590,775],[300,770],[295,520]]],
+  ['V5','v5',['acg','VCC'],['acd','VCC'],'8 cm','soudé','soudé',3,false,'2 fils dans le trou VCC du capteur gauche : celui-ci et V4.',[[660,786],[910,786]]],
+  ['V6','v5',['oled','VCC'],['h5',''],'25 cm','soudé','épissure',5,false,'Câble Dupont 30 cm, une prise coupée. 10 cm de mou pour la coque.',[[780,190],[400,214],[268,262],[268,440]]],
+  ['V7','v5',['oled','VCC'],['ttp','VCC'],'12 cm','soudé','soudé',5,false,'2 fils dans le trou VCC de l\'écran : celui-ci et V6.',[[780,182],[445,182]]],
+  ['G1','gnd',['nano','GND '],['hg',''],'8 cm','prise','épissure',6,false,'Sur la 2e broche GND de la Nano (pas celle du MT3608).',[]],
+  ['G2','gnd',['buz','GND'],['hg',''],'8 cm','prise','épissure',6,false,'Câble Dupont 10 cm, une prise coupée.',[[330,370]]],
+  ['G3','gnd',['acg','GND'],['hg',''],'20 cm','soudé','épissure',3,false,'Soudé sur le capteur gauche à l\'étape 3.',[[705,778],[600,540],[380,515]]],
+  ['G4','gnd',['acg','GND'],['acd','GND'],'8 cm','soudé','soudé',3,false,'2 fils dans le trou GND du capteur gauche : celui-ci et G3.',[[705,792],[955,792]]],
+  ['G5','gnd',['oled','GND'],['hg',''],'25 cm','soudé','épissure',5,false,'Câble Dupont 30 cm, une prise coupée. 10 cm de mou pour la coque.',[[735,196],[410,240],[352,290],[358,440]]],
+  ['G6','gnd',['oled','GND'],['ttp','GND'],'12 cm','soudé','soudé',5,false,'2 fils dans le trou GND de l\'écran : celui-ci et G5.',[[735,176],[495,176]]],
+  ['S1','sig',['acg','DO'],['nano','D8'],'15 cm','soudé','prise',3,false,'Câble Dupont 20 cm, une prise coupée. Étiquette « D8 ».',[[790,778],[870,770],[880,480],[830,462]]],
+  ['S2','sig',['acd','DO'],['nano','D7'],'15 cm','soudé','prise',3,false,'Câble Dupont 20 cm, une prise coupée. Étiquette « D7 ».',[[1040,780],[1085,760],[1085,480],[880,458]]],
+  ['S3','sig',['ttp','SIG'],['nano','D11'],'22 cm','soudé','prise',5,false,'Câble Dupont 30 cm, une prise coupée. 10 cm de mou pour la coque.',[]],
+  ['S4','sig',['buz','I/O'],['nano','D3'],'10 cm','prise','prise',6,false,'Un câble Dupont femelle-femelle entier, rien à souder.',[]],
+  ['S5','i2c',['oled','SDA'],['nano','A5'],'25 cm','soudé','prise',5,false,'Câble Dupont 30 cm, une prise coupée. Étiquette « A5 ».',[[870,205],[720,245]]],
+  ['S6','i2c',['oled','SCK'],['nano','A4'],'25 cm','soudé','prise',5,false,'Câble Dupont 30 cm, une prise coupée. Étiquette « A4 ».',[[825,200],[650,245]]]
+].map(r => ({ id: r[0], fam: r[1], a: r[2], b: r[3], len: r[4], e1: r[5], e2: r[6], stage: r[7], done: r[8], note: r[9], via: r[10], tagAt: r[11] }));
+
+/* ---------- stages ---------- */
+const STAGES = [
+  { n: 1, title: 'Déjà fait', done: true,
+    solder: ['MT3608 réglé à 7,54 V', '4 fils dans VOUT+ / VOUT− (A6 à A9)', 'Driver : moteurs (M1 à M4), IN1 à IN4 (C1 à C4), fil EEP'],
+    mount: '<b>Rien de monté encore.</b> Les 2 fils test de VIN+ / VIN− serviront pour A4 et A5.' },
+  { n: 2, title: 'Plancher : moteurs et driver',
+    solder: ['Rien à souder.'],
+    mount: '<b>Monter :</b> patin dessous (2 vis + écrous) → moteurs dans les berceaux, cosses au centre → capots, renfort contre le moteur, 2 vis extérieures → driver collé à l\'arrière droit. Le MT3608 pend sur ses fils.' },
+  { n: 3, title: 'Capteurs anti-chute',
+    solder: ['Gauche : DO (S1), VCC 2 fils (V4 + V5), GND 2 fils (G3 + G4)', 'Droit : DO (S2), VCC (V5), GND (G4)', 'Présente d\'abord les 2 capteurs sous leurs plaques pour mesurer V5 et G4'],
+    mount: '<b>D\'abord :</b> régler chaque capteur sur la table (test 8), car sa vis bleue sera contre la plaque. <b>Puis monter :</b> capteurs collés sous les plaques avant avec du double-face mousse de chaque côté de la vis bleue, composants vers le bas, œil au-dessus des fenêtres → MT3608 collé à plat sur les 2 plaques.' },
+  { n: 4, title: 'Chargeur et batterie',
+    solder: ['Batterie sur B+ / B− (A1, A2), un fil à la fois', 'OUT− → fil test VIN− rallongé (A5)', 'OUT+ : fil de 20 cm (A3), l\'autre bout libre'],
+    mount: '<b>Monter :</b> chargeur collé à l\'arrière gauche, USB-C contre l\'ouverture → batterie posée sur son étagère. Puis tests 2 et 3.' },
+  { n: 5, title: 'Coque : interrupteur, écran, caresse',
+    solder: ['Sur la table : interrupteur COM ← A3, ON ← A4 (rallongé) + A10', 'Écran : V6, G5, S5, S6 + V7 et G6 vers la caresse', 'Caresse : V7, G6, S3'],
+    mount: '<b>Monter :</b> interrupteur dans son trou (écrou) → façade collée → écran glissé par le bas, scotché → caresse collée dans sa cage. Puis tests 4 et 5.' },
+  { n: 6, title: 'Pont : Nano, buzzer, épissures',
+    solder: ['Épissure 5V : V1, V2, V3, V4, V6', 'Épissure GND : G1, G2, G3, G5', 'Rien d\'autre à souder : tout le reste se branche'],
+    mount: '<b>Monter :</b> Nano à l\'envers sur ses plots, collée → buzzer devant → brancher chaque prise selon son étiquette (A0, A4, A5, D3, D5 à D11, VIN, GND, 5V). Puis tests 6 à 13, et fermeture avec 4 vis M2.' }
+];
+
+/* ---------- tests ---------- */
+const TESTS = [
+  { id: 't1', when: 'Fait', title: 'MT3608 réglé à 7,5 V', steps: ['Alimenté par la batterie, mesure entre VOUT+ et VOUT−.', 'Tourne la petite vis du potentiomètre bleu jusqu\'à 7,5 V.'], expect: 'Tu as mesuré 7,54 V : c\'est bon.', done: true },
+  { id: 't2', when: 'Étape 4, avant de brancher la batterie', title: 'Pas de court-circuit', steps: ['Voltmètre en mode bip, rien d\'alimenté.', 'Pointes sur OUT+ et OUT− du chargeur, puis sur VOUT+ et VOUT− du MT3608.'], expect: 'Pas de bip continu. Un bip très court au début, c\'est le condensateur qui se charge : normal.' },
+  { id: 't3', when: 'Étape 4', title: 'Le chargeur charge', steps: ['Interrupteur sur OFF.', 'Branche un câble USB-C sur le chargeur.', 'Mesure entre OUT+ et OUT−.'], expect: 'LED rouge = en charge, bleue ou verte = pleine. OUT+ / OUT− = 3,7 à 4,2 V. Si 0 V au tout début : l\'USB-C réveille la protection de la batterie, c\'est normal. Recharge toujours robot éteint.' },
+  { id: 't4', when: 'Étape 5', title: 'L\'interrupteur coupe bien', steps: ['Levier sur OFF : mesure VIN+ / VIN− du MT3608.', 'Levier sur ON : même mesure, puis VOUT+ / VOUT−.'], expect: 'OFF : 0 V. ON : tension de la batterie sur VIN, 7,5 V sur VOUT. Si c\'est l\'inverse, A4 est sur la mauvaise patte.' },
+  { id: 't5', when: 'Étape 5, avant de brancher A0', title: 'Le fil A0 est sans danger', steps: ['Mesure entre la prise du fil A10 (bout de fil dénudé dedans) et OUT− du chargeur.'], expect: 'ON : 3,7 à 4,2 V. OFF : 0 V. Jamais plus de 5 V. Sinon, ne le branche pas sur la Nano.' },
+  { id: 't6', when: 'Étape 6, premier allumage', title: 'La Nano s\'allume sur batterie', steps: ['Câble USB débranché, interrupteur sur ON.', 'Mesure entre la broche 5V de la Nano et une GND.'], expect: 'La LED de la Nano s\'allume, la broche 5V donne environ 5 V, l\'écran s\'allume.' },
+  { id: 't7', when: 'Étape 6', title: 'Téléverser le programme', steps: ['Dans MATLAB : ouvre DesktopRobotSimuModel (le chemin et params.m se chargent seuls).', 'Branche la Nano en USB par l\'ouverture arrière.', 'Hardware → Build, Deploy & Start.'], expect: 'Au démarrage : yeux fermés et petit bâillement (son « sleep »).' },
+  { id: 't8', when: 'Étape 3, avant de coller les capteurs', title: 'Régler les capteurs anti-chute', steps: ['Nano branchée en USB au PC. Capteur alimenté : VCC sur la broche 5V, GND sur une GND (câble Dupont femelle-femelle, bout de fil dénudé enfoncé dans l\'autre prise). Une LED s\'allume : c\'est la LED d\'alimentation.', 'Tiens le capteur composants vers le bas, à 1 cm au-dessus de la table (la hauteur qu\'il aura dans le robot).', 'Tourne doucement la vis bleue jusqu\'à ce que la 2e LED s\'allume, puis encore un petit quart de tour.', 'Passe le capteur au-dessus du vide, au bord de la table : la 2e LED doit s\'éteindre. Si elle reste allumée, reviens un peu en arrière sur la vis.'], expect: 'Sur la table : LED allumée. Au-dessus du vide : LED éteinte. Le programme considère « vide » = 1 (voidValue dans params.m) : si le robot recule en permanence sur la table, mets voidValue = 0.' },
+  { id: 't9', when: 'Après téléversement', title: 'La caresse réveille le robot', steps: ['Pose le doigt dans le creux du dessus de la coque pendant une seconde.'], expect: 'Réveil : yeux ouverts et son qui monte. Caresse encore : danse et yeux « ^^ ». Si rien, appuie le capteur bien contre le plafond de sa cage.' },
+  { id: 't10', when: 'Après téléversement, roues en l\'air', title: 'Les roues tournent dans le bon sens', steps: ['Pose le robot sur un pot ou une boîte, roues dans le vide.', 'Réveille-le puis attends 60 s (wanderWait) : il commence à se promener par petits pas.'], expect: 'Les deux roues avancent ensemble pendant les petits pas. Une roue à l\'envers : dirLeft ou dirRight = -1 dans params.m, puis téléverse à nouveau. Rien à dessouder.' },
+  { id: 't11', when: 'Après téléversement', title: 'Vitesse minimale des moteurs', steps: ['Regarde les petits virages et l\'alignement au bord.'], expect: 'Si un moteur grogne sans tourner : monte pwmMin à 0,35 puis 0,40. S\'il fonce trop : baisse speedWander.' },
+  { id: 't12', when: 'Après téléversement', title: 'La tension de batterie est bien lue', steps: ['Ajoute un bloc Display sur le signal Volt.', 'Lance Monitor & Tune avec le câble USB branché, batterie branchée et interrupteur sur ON.'], expect: 'Volt affiche à peu près la tension de la batterie (3,7 à 4,2 V). Si c\'est environ 16 fois trop : adcMax = 16383 dans params.m.' },
+  { id: 't13', when: 'En dernier', title: 'Le test du bord de table', steps: ['Sur la vraie table, une main prête sous le bord.', 'Laisse-le se promener jusqu\'au bord.'], expect: 'Il s\'arrête, fait les gros yeux et « oh-oh », s\'aligne, recule, puis reprend sa promenade.' }
+];
+
+/* ---------- drawing helpers ---------- */
+const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+const pinPos = (cid, pin) => C[cid].pins[pin];
+const OUT = { t: [0, -1], b: [0, 1], l: [-1, 0], r: [1, 0], c: [0, 0] };
+
+function pathFor(w) {
+  const [ax, ay, as] = pinPos(...w.a), [bx, by, bs] = pinPos(...w.b);
+  const L = 18;
+  const pts = [[ax, ay]];
+  if (as !== 'c') pts.push([ax + OUT[as][0] * L, ay + OUT[as][1] * L]);
+  w.via.forEach(p => pts.push(p));
+  if (bs !== 'c') pts.push([bx + OUT[bs][0] * L, by + OUT[bs][1] * L]);
+  pts.push([bx, by]);
+  // Catmull-Rom -> cubic Bezier
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const t = 0.5 / 3 * 2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) * t / 2, p1[1] + (p2[1] - p0[1]) * t / 2];
+    const c2 = [p2[0] - (p3[0] - p1[0]) * t / 2, p2[1] - (p3[1] - p1[1]) * t / 2];
+    d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
+/* bands */
+const bands = [
+  { y: 22, h: 186, label: 'Coque', note: 'se soulève : 10 cm de mou sur ses fils' },
+  { y: 228, h: 276, label: 'Pont', note: 'étage du haut, 35 mm au-dessus du sol' },
+  { y: 524, h: 362, label: 'Plancher', note: 'et étagère batterie' }
+];
+const gBands = el('g', {}, svg);
+bands.forEach(b => {
+  el('rect', { x: 8, y: b.y, width: 1224, height: b.h, rx: 6, class: 'band-bg' }, gBands);
+  const t = el('text', { x: 24, y: b.y + b.h - 12, class: 'band-label', transform: `rotate(-90 24 ${b.y + b.h - 12})` }, gBands);
+  t.textContent = b.label;
+  const n = el('text', { x: 1220, y: b.y + 18, class: 'band-note', 'text-anchor': 'end' }, gBands); n.textContent = b.note;
+});
+
+/* wires (under components) */
+const gWires = el('g', {}, svg);
+const wireEls = {};
+W.forEach(w => {
+  const g = el('g', { class: 'wire-g', 'data-id': w.id, tabindex: 0, role: 'button', 'aria-label': `Fil ${w.id}` }, gWires);
+  const d = pathFor(w);
+  el('path', { d, class: 'wire-hit' }, g);
+  const p = el('path', { d, class: 'wire ' + (w.done ? 'done' : 'todo'), stroke: FAM[w.fam].color }, g);
+  wireEls[w.id] = { g, p };
+  g.addEventListener('click', e => { e.stopPropagation(); selectWire(w.id); });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectWire(w.id); } });
+});
+
+/* components */
+const gComps = el('g', {}, svg);
+for (const id in C) {
+  const c = C[id];
+  const g = el('g', { class: 'comp' + (c.hub ? ' hub' : ''), 'data-id': id, tabindex: 0, role: 'button', 'aria-label': c.name }, gComps);
+  if (c.hub) {
+    el('circle', { cx: c.x, cy: c.y, r: c.r, stroke: FAM[c.fam].color }, g);
+    const left = c.fam === 'v5';
+    const t = el('text', { x: left ? c.x - 20 : c.x + 20, y: c.y + 4, class: 'sub', 'text-anchor': left ? 'end' : 'start' }, g);
+    t.textContent = c.name;
+  } else {
+    el('rect', { x: c.x, y: c.y, width: c.w, height: c.h, rx: 6, class: 'body' }, g);
+    const [tx0, ty0, ta] = c.tpos || [c.x + 12, c.y + 24, 'start'];
+    const t = el('text', { x: tx0, y: ty0, class: 'name', 'text-anchor': ta }, g); t.textContent = c.name;
+    const s = el('text', { x: tx0, y: ty0 + 16, class: 'sub', 'text-anchor': ta }, g); s.textContent = c.sub;
+    for (const pn in c.pins) {
+      const [px, py, side] = c.pins[pn];
+      el('rect', { x: px - 4, y: py - 4, width: 8, height: 8, rx: 1.5, class: 'pin' }, g);
+      const lab = pn.trim();
+      const unused = (lab === '—' || lab === 'ULT');
+      let tx = px, ty = py, anchor = 'middle';
+      if (side === 'b') ty = py - 10;
+      if (side === 't') ty = py + 18;
+      if (side === 'l') { tx = px + 10; ty = py + 4; anchor = 'start'; }
+      if (side === 'r') { tx = px - 10; ty = py + 4; anchor = 'end'; }
+      if (c.noPinLabels) continue;
+      const lt = el('text', { x: tx, y: ty, class: 'pin-label' + (unused ? ' dim' : ''), 'text-anchor': anchor }, g);
+      lt.textContent = lab === 'ULT' ? 'ULT (vide)' : (lab === '—' ? 'vide' : lab);
+    }
+  }
+  g.addEventListener('click', e => { e.stopPropagation(); selectComp(id); });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectComp(id); } });
+}
+
+/* tags at mid-length (above everything) */
+const gTags = el('g', {}, svg);
+W.forEach(w => {
+  const p = wireEls[w.id].p;
+  const L = p.getTotalLength();
+  const m = p.getPointAtLength(L * (w.tagAt || 0.5));
+  const g = el('g', { class: 'tag', 'data-id': w.id }, gTags);
+  const wdt = 8 + w.id.length * 7;
+  el('rect', { x: m.x - wdt / 2, y: m.y - 8, width: wdt, height: 16, rx: 8, stroke: FAM[w.fam].color }, g);
+  const t = el('text', { x: m.x, y: m.y + 3.5, 'text-anchor': 'middle', fill: FAM[w.fam].color }, g); t.textContent = w.id;
+  wireEls[w.id].tag = g;
+  g.addEventListener('click', e => { e.stopPropagation(); selectWire(w.id); });
+});
+
+/* ---------- selection ---------- */
+const panel = document.getElementById('panel');
+const compName = id => C[id].name;
+const endTxt = (e) => ({ 'soudé': 'soudé', 'prise': 'prise femelle', 'épissure': 'dans l\'épissure' }[e] || e);
+function clearSel() {
+  svg.classList.remove('focus');
+  document.querySelectorAll('.wire-g.on').forEach(n => n.classList.remove('on'));
+  document.querySelectorAll('.comp.sel').forEach(n => n.classList.remove('sel'));
+  document.querySelectorAll('.tag').forEach(n => n.style.opacity = '');
+  document.querySelectorAll('.stage.active').forEach(n => n.classList.remove('active'));
+}
+function focusWires(ids) {
+  svg.classList.add('focus');
+  W.forEach(w => {
+    const on = ids.includes(w.id);
+    wireEls[w.id].g.classList.toggle('on', on);
+    wireEls[w.id].tag.style.opacity = on ? '1' : '.12';
+  });
+}
+function pinName(ref) { const p = ref[1].trim(); return p ? `${compName(ref[0])} · ${p}` : compName(ref[0]); }
+function selectWire(id) {
+  const w = W.find(x => x.id === id); clearSel(); focusWires([id]);
+  panel.innerHTML = `
+    <span class="eyebrow">Fil</span>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="id" style="background:${FAM[w.fam].color}">${w.id}</span><span class="state ${w.done ? 'ok' : 'todo'}">${w.done ? 'Fait' : 'À faire'}</span></div>
+    <h3>${pinName(w.a)} → ${pinName(w.b)}</h3>
+    <div class="len">${w.len}</div>
+    <dl class="kv">
+      <dt>Bout 1</dt><dd>${endTxt(w.e1)} sur ${pinName(w.a)}</dd>
+      <dt>Bout 2</dt><dd>${endTxt(w.e2)} sur ${pinName(w.b)}</dd>
+      <dt>Famille</dt><dd>${FAM[w.fam].label}</dd>
+      <dt>Étape</dt><dd><button class="linkish" data-stage="${w.stage}">Étape ${w.stage} : ${STAGES[w.stage - 1].title}</button></dd>
+    </dl>
+    ${w.note ? `<p class="note">${w.note}</p>` : ''}`;
+  panel.querySelector('[data-stage]').addEventListener('click', e => selectStage(+e.target.dataset.stage, true));
+}
+function selectComp(id) {
+  const c = C[id]; clearSel();
+  const ids = W.filter(w => w.a[0] === id || w.b[0] === id).map(w => w.id);
+  focusWires(ids);
+  document.querySelector(`.comp[data-id="${id}"]`).classList.add('sel');
+  panel.innerHTML = `
+    <span class="eyebrow">Composant</span>
+    <h3>${c.name}</h3>
+    <dl class="kv"><dt>Où</dt><dd>${c.where}</dd></dl>
+    <p class="note">${c.tip}</p>
+    <div><strong style="font-size:14px">Ses fils</strong><ul>${ids.map(i => { const w = W.find(x => x.id === i); const other = w.a[0] === id ? w.b : w.a; return `<li><button class="linkish" data-w="${i}">${i}</button> → ${pinName(other)} · ${w.len}${w.done ? ' ✓' : ''}</li>`; }).join('')}</ul></div>`;
+  panel.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => selectWire(b.dataset.w)));
+}
+svg.addEventListener('click', () => { clearSel(); panel.innerHTML = '<span class="eyebrow">Détail</span><p class="empty">Clique sur un fil, une étiquette ou un composant.</p>'; });
+
+/* ---------- toolbar: family filters + hide done ---------- */
+const tb = document.getElementById('toolbar');
+const famOn = {}; Object.keys(FAM).forEach(k => famOn[k] = true);
+let hideDone = false;
+function applyFilters() {
+  W.forEach(w => {
+    const hidden = !famOn[w.fam] || (hideDone && w.done);
+    wireEls[w.id].g.classList.toggle('hidden', hidden);
+    wireEls[w.id].tag.style.display = hidden ? 'none' : '';
+  });
+}
+Object.entries(FAM).forEach(([k, f]) => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.setAttribute('aria-pressed', 'true');
+  b.innerHTML = `<span class="sw" style="background:${f.color}"></span>${f.label}`;
+  b.addEventListener('click', () => { famOn[k] = !famOn[k]; b.setAttribute('aria-pressed', famOn[k]); applyFilters(); });
+  tb.appendChild(b);
+});
+tb.appendChild(Object.assign(document.createElement('span'), { className: 'sep' }));
+const tg = document.createElement('label'); tg.className = 'toggle';
+tg.innerHTML = '<input type="checkbox" id="hideDone"> Cacher les fils déjà faits';
+tb.appendChild(tg);
+tg.querySelector('input').addEventListener('change', e => { hideDone = e.target.checked; applyFilters(); });
+
+/* ---------- stages ---------- */
+const stWrap = document.getElementById('stages');
+function selectStage(n, scroll) {
+  clearSel();
+  focusWires(W.filter(w => w.stage === n).map(w => w.id));
+  const card = stWrap.querySelector(`[data-n="${n}"]`); card.classList.add('active');
+  const s = STAGES[n - 1];
+  panel.innerHTML = `<span class="eyebrow">Étape ${n}</span><h3>${s.title}</h3><ul>${s.solder.map(x => `<li>${x}</li>`).join('')}</ul><p class="note">${s.mount}</p>`;
+  if (scroll) svg.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}
+STAGES.forEach(s => {
+  const b = document.createElement('button');
+  b.className = 'stage' + (s.done ? ' donestage' : ''); b.dataset.n = s.n;
+  b.innerHTML = `<div class="head"><span class="n">${s.n}</span><h3>${s.title}${s.done ? ' ✓' : ''}</h3></div>
+    <ul>${s.solder.map(x => `<li>${x}</li>`).join('')}</ul><div class="mount">${s.mount}</div>`;
+  b.addEventListener('click', () => selectStage(s.n, true));
+  stWrap.appendChild(b);
+});
+
+/* ---------- tests ---------- */
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem('robot-tests') || '{}'); } catch (e) { saved = {}; }
+const tWrap = document.getElementById('tests');
+TESTS.forEach(t => {
+  const d = document.createElement('div'); d.className = 'test';
+  const checked = saved[t.id] ?? !!t.done;
+  d.innerHTML = `<span class="when">${t.when}</span>
+    <label><input type="checkbox" id="chk-${t.id}" ${checked ? 'checked' : ''}> ${t.title}</label>
+    <ol>${t.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+    <p class="expect"><b>Résultat attendu :</b> ${t.expect}</p>`;
+  d.classList.toggle('checked', checked);
+  d.querySelector('input').addEventListener('change', e => {
+    saved[t.id] = e.target.checked; d.classList.toggle('checked', e.target.checked);
+    try { localStorage.setItem('robot-tests', JSON.stringify(saved)); } catch (err) {}
+  });
+  tWrap.appendChild(d);
+});
+
+/* ---------- table ---------- */
+const tb2 = document.querySelector('#wtable tbody');
+W.forEach(w => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="mono"><span class="dot" style="background:${FAM[w.fam].color}"></span>${w.id}</td>
+    <td>${pinName(w.a)}</td><td>${pinName(w.b)}</td><td class="mono">${w.len}</td>
+    <td>${endTxt(w.e1)}</td><td>${endTxt(w.e2)}</td><td class="mono">${w.stage}</td>
+    <td><span class="state ${w.done ? 'ok' : 'todo'}">${w.done ? 'Fait' : 'À faire'}</span></td>`;
+  tr.addEventListener('click', () => { selectWire(w.id); svg.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  tb2.appendChild(tr);
+});
+})();
+</script>
+</html>

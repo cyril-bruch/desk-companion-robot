@@ -1,0 +1,70 @@
+function [uL, uR, brkL, brkR] = motionGen(cmd)
+% MOTION GENERATOR - turns the chart's motor command (cmdMotor) into a
+% target speed for each wheel (-1..1, + = forward) and a brake flag per wheel.
+% Parameters come from params.m (command codes, speeds, wander/dance timing, Ts).
+persistent lastCmd t phase dur turnDir seed
+if isempty(lastCmd)
+    lastCmd = -1; t = 0; phase = 0; dur = 1; turnDir = 1; seed = 20261101;
+end
+if cmd ~= lastCmd               % new command: restart its little sequence
+    t = 0; phase = 0; dur = wanderPause(1);
+    lastCmd = cmd;
+end
+t = t + Ts;
+
+uL = 0; uR = 0; brkL = false; brkR = false;
+
+if cmd == wander
+    % random sequence: pause -> (step forward OR turn on the spot) -> pause ...
+    if t >= dur
+        t = 0;
+        [r1, seed] = rnd(seed);
+        [r2, seed] = rnd(seed);
+        if phase ~= 0                       % a move just ended -> pause
+            phase = 0;
+            dur = wanderPause(1) + r1*(wanderPause(2) - wanderPause(1));
+        elseif r1 < wanderTurnProb          % turn on the spot, random side
+            phase = 2;
+            if r2 < 0.5, turnDir = 1; else, turnDir = -1; end
+            [r3, seed] = rnd(seed);
+            dur = wanderTurn(1) + r3*(wanderTurn(2) - wanderTurn(1));
+        else                                % small step forward
+            phase = 1;
+            dur = wanderGo(1) + r2*(wanderGo(2) - wanderGo(1));
+        end
+    end
+    if phase == 1
+        uL = speedWander;        uR = speedWander;
+    elseif phase == 2
+        uL = turnDir*speedTurn;  uR = -turnDir*speedTurn;
+    else
+        brkL = true;             brkR = true;
+    end
+
+elseif cmd == dance
+    % happy wiggle on the spot: left, right, left, right...
+    if mod(t, dancePeriod) < dancePeriod/2
+        uL = speedDance;  uR = -speedDance;
+    else
+        uL = -speedDance; uR = speedDance;
+    end
+
+elseif cmd == backward
+    uL = -speedBack; uR = -speedBack;
+
+elseif cmd == alignRight            % right wheel braked, left wheel slowly forward
+    uL = speedAlign; brkR = true;
+
+elseif cmd == alignLeft             % left wheel braked, right wheel slowly forward
+    uR = speedAlign; brkL = true;
+
+else                                % brake (and any unknown code)
+    brkL = true; brkR = true;
+end
+end
+
+function [r, s] = rnd(s)
+% Park-Miller pseudo-random number in (0,1)
+s = mod(s*16807, 2147483647);
+r = s/2147483647;
+end
