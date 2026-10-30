@@ -170,7 +170,7 @@ All tunable values live in `params.m`. Change a value and redeploy.
 
 ## 3D printing
 
-Parametric sources in `cad/src/robot.py` (Python / CadQuery), print-ready STL files and ready-made plates in `cad/print/`, a 3D preview in `cad/preview/`. Printed in PLA (white body, pink face and wheels) on a FlashForge Dreamer; slicer settings in [`docs/impression.md`](docs/impression.md) and assembly guide in [`docs/assemblage.md`](docs/assemblage.md) (in French).
+Parametric sources in `cad/src/robot.py` (Python / CadQuery), print-ready STL files and ready-made plates in `cad/print/`, a 3D preview in `cad/preview/`. Printed in PLA (pink body, white face and wheels) on a FlashForge Dreamer; slicer settings in [`docs/impression.md`](docs/impression.md) and assembly guide in [`docs/assemblage.md`](docs/assemblage.md) (in French).
 
 ## Roadmap
 
