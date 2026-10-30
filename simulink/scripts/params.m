@@ -58,16 +58,16 @@ dirLeft      = -1;    % set to -1 if the left wheel turns backwards when it shou
 dirRight     = -1;    % same for the right wheel
 
 speedWander  = 0.45;   % small steps forward
-speedTurn    = 0.4;   % turning on the spot while wandering
+speedTurn    = 0.45;  % outer wheel of a curve while wandering
 speedDance   = 0.4;   % happy wiggle (one wheel at a time)
 speedBack    = 0.35;  % reverse after an edge (gentle: both motors start together)
 speedAlign   = 0.4;   % alignment facing the void
 
-% Wander = random sequence: pause -> (step forward OR turn on the spot) -> pause ...
+% Wander = random sequence: pause -> (step forward OR gentle curve) -> pause ...
 wanderGo       = [0.4 1.2];  % [s] min / max duration of a step forward
-wanderTurn     = [0.2 0.7];  % [s] min / max duration of a turn
+wanderTurn     = [0.6 1.5];  % [s] min / max duration of a curve
 wanderPause    = [1 3];      % [s] min / max pause between moves
-wanderTurnProb = 0.4;        % probability that the next move is a turn
+wanderTurnProb = 0.5;        % probability that the next move is a curve
 dancePeriod    = 1.6;        % [s] one full wiggle (left fwd/back, right fwd/back)
 
 %% ---------- Eye expressions (face) ----------

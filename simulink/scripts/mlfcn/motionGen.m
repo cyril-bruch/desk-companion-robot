@@ -19,7 +19,9 @@ if tc < 0.2 && cmd ~= 0         % short coast between two moves: the wheels slow
 end
 
 if cmd == wander
-    % random sequence: pause -> (step forward OR turn on the spot) -> pause ...
+    % random sequence: pause -> (step forward OR gentle curve) -> pause ...
+    % Both wheels always turn forward: no spinning on the spot, no reversing
+    % (there is no cliff sensor at the back).
     if t >= dur
         t = 0;
         [r1, seed] = rnd(seed);
@@ -27,7 +29,7 @@ if cmd == wander
         if phase ~= 0                       % a move just ended -> pause
             phase = 0;
             dur = wanderPause(1) + r1*(wanderPause(2) - wanderPause(1));
-        elseif r1 < wanderTurnProb          % turn on the spot, random side
+        elseif r1 < wanderTurnProb          % curve, random side
             phase = 2;
             if r2 < 0.5, turnDir = 1; else, turnDir = -1; end
             [r3, seed] = rnd(seed);
@@ -40,7 +42,12 @@ if cmd == wander
     if phase == 1
         uL = speedWander;        uR = speedWander;
     elseif phase == 2
-        uL = turnDir*speedTurn;  uR = -turnDir*speedTurn;
+        % outer wheel at speedTurn, inner wheel at 30 % of it -> curve
+        if turnDir > 0
+            uL = speedTurn;      uR = 0.3*speedTurn;     % curve to the right
+        else
+            uL = 0.3*speedTurn;  uR = speedTurn;         % curve to the left
+        end
     else
         brkL = true;             brkR = true;
     end
