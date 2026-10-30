@@ -2,17 +2,21 @@ function [uL, uR, brkL, brkR] = motionGen(cmd)
 % MOTION GENERATOR - turns the chart's motor command (cmdMotor) into a
 % target speed for each wheel (-1..1, + = forward) and a brake flag per wheel.
 % Parameters come from params.m (command codes, speeds, wander/dance timing, Ts).
-persistent lastCmd t phase dur turnDir seed
+persistent lastCmd t tc phase dur turnDir seed
 if isempty(lastCmd)
-    lastCmd = -1; t = 0; phase = 0; dur = 1; turnDir = 1; seed = 20261101;
+    lastCmd = -1; t = 0; tc = 0; phase = 0; dur = 1; turnDir = 1; seed = 20261101;
 end
 if cmd ~= lastCmd               % new command: restart its little sequence
-    t = 0; phase = 0; dur = wanderPause(1);
+    t = 0; tc = 0; phase = 0; dur = wanderPause(1);
     lastCmd = cmd;
 end
 t = t + Ts;
+tc = tc + Ts;                   % time since the command changed
 
 uL = 0; uR = 0; brkL = false; brkR = false;
+if tc < 0.2 && cmd ~= 0         % short coast between two moves: the wheels slow
+    return                      % down before the next one (no current spike)
+end
 
 if cmd == wander
     % random sequence: pause -> (step forward OR turn on the spot) -> pause ...
@@ -42,12 +46,18 @@ if cmd == wander
     end
 
 elseif cmd == dance
-    % happy wiggle on the spot: left, right, left, right...
-    if mod(t, dancePeriod) < dancePeriod/2
-        uL = speedDance;  uR = -speedDance;
-    else
-        uL = -speedDance; uR = speedDance;
-    end
+    % gentle wiggle: one wheel at a time, with a short gap before each
+    % change of direction (both motors reversing at once reset the Nano)
+    k = mod(t, dancePeriod) / dancePeriod;   % position in one wiggle, 0..1
+    if k < 0.2
+        uL = speedDance;                     % left wheel forward
+    elseif k >= 0.25 && k < 0.45
+        uL = -speedDance;                    % left wheel back
+    elseif k >= 0.5 && k < 0.7
+        uR = speedDance;                     % right wheel forward
+    elseif k >= 0.75 && k < 0.95
+        uR = -speedDance;                    % right wheel back
+    end                                      % gaps: wheels slow down to 0 (soft start)
 
 elseif cmd == backward
     uL = -speedBack; uR = -speedBack;
