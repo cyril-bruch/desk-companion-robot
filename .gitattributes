@@ -1,0 +1,4 @@
+# GitHub language stats: count only the project's own code
+simulink/blocks/oled/Oled_eyes/Dependencies/** linguist-vendored
+docs/** linguist-documentation
+cad/preview/** linguist-vendored
