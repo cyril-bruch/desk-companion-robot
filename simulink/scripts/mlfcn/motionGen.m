@@ -2,18 +2,19 @@ function [uL, uR, brkL, brkR] = motionGen(cmd)
 % MOTION GENERATOR - turns the chart's motor command (cmdMotor) into a
 % target speed for each wheel (-1..1, + = forward) and a brake flag per wheel.
 % Parameters come from params.m (command codes, speeds, wander/dance timing, Ts).
-persistent lastCmd t phase dur turnDir seed
+persistent lastCmd t tc phase dur turnDir seed
 if isempty(lastCmd)
-    lastCmd = -1; t = 0; phase = 0; dur = 1; turnDir = 1; seed = 20261101;
+    lastCmd = -1; t = 0; tc = 0; phase = 0; dur = 1; turnDir = 1; seed = 20261101;
 end
 if cmd ~= lastCmd               % new command: restart its little sequence
-    t = 0; phase = 0; dur = wanderPause(1);
+    t = 0; tc = 0; phase = 0; dur = wanderPause(1);
     lastCmd = cmd;
 end
 t = t + Ts;
+tc = tc + Ts;                   % time since the command changed
 
 uL = 0; uR = 0; brkL = false; brkR = false;
-if t < 0.2 && cmd ~= 0          % short coast between two moves: the wheels slow
+if tc < 0.2 && cmd ~= 0         % short coast between two moves: the wheels slow
     return                      % down before the next one (no current spike)
 end
 
