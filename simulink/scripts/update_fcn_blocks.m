@@ -14,8 +14,8 @@ params;
 if bdIsLoaded(mdl), close_system(mdl, 0); end           % reload the file from disk
 load_system(fullfile(root, 'models', [mdl '.slx']));
 
-blocks = {'ACTIONNEURS/motionGen', 'motionGen'; 'ACTIONNEURS/drv8833', 'drv8833'; ...
-          'SoundPlayer', 'soundPlayer'; 'batterie level/battFilter', 'battFilter'};
+blocks = {'Motors/motionGen', 'motionGen'; 'Motors/drv8833', 'drv8833'; ...
+          'Sound player', 'soundPlayer'; 'Battery/battFilter', 'battFilter'};
 for k = 1:size(blocks, 1)
     path = [mdl '/' blocks{k,1}];
     emc = sfroot().find('-isa', 'Stateflow.EMChart', 'Path', path);

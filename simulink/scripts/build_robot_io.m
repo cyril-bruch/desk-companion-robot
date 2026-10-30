@@ -3,7 +3,7 @@
 %  What it does (re-run safe, makes a backup first):
 %   1. Paths: model callbacks add scripts/ and the driver blocks to the path.
 %   2. Battery: A0 read every Ts, converted to volts and low-pass filtered.
-%   3. ACTIONNEURS: cmdMotor -> motion generator (wander/dance/back/align)
+%   3. Motors: cmdMotor -> motion generator (wander/dance/back/align)
 %                   -> soft start -> DRV8833 truth table -> PWM D10 D9 D6 D5.
 %      + sensor pins: touch D11, cliff left D7, cliff right D8.
 %   4. Sound: chart "sound" code -> melody player -> Buzzer_tone (D3).
@@ -49,7 +49,7 @@ chart = [mdl '/Robot mode'];
 cph   = get_param(chart, 'PortHandles');              % Outport: 1 cmdMotor, 2 face, 3 sound
 
 % ---------- 2. battery ----------
-bat = [mdl '/batterie level'];
+bat = [mdl '/Battery'];
 ain = [bat '/Analog Input'];
 set_param(ain, 'SampleTime', 'Ts');                   % single rate model (no rate transitions)
 gainBlk = [bat '/Gain'];
@@ -64,7 +64,7 @@ connect(bat, bf, 1, [bat '/Volt'], 1);
 fprintf('2. Battery: A0 every Ts -> volts -> low-pass filter\n');
 
 % ---------- 3. ACTIONNEURS ----------
-act = [mdl '/ACTIONNEURS'];
+act = [mdl '/Motors'];
 if getSimulinkBlockHandle(act) > 0, removeLines(act); delete_block(act); end
 add_block('built-in/Subsystem', act, 'Position', [675 400 805 470]);
 add_block('simulink/Sources/In1', [act '/cmdMotor'], 'Position', [20 103 50 117]);
@@ -93,11 +93,11 @@ for k = 1:4
 end
 removeLines(chart, 'out', 1);
 connect(mdl, chart, 1, act, 1);
-fprintf('3. ACTIONNEURS: motionGen -> soft start -> drv8833 -> PWM D10 D9 D6 D5\n');
+fprintf('3. Motors: motionGen -> soft start -> drv8833 -> PWM D10 D9 D6 D5\n');
 
 % ---------- 3b. sensor pins (as wired on the robot) ----------
-setPin([mdl '/pet captor'], 11);                     % touch sensor SIG -> D11
-ed = [mdl '/edge detector'];
+setPin([mdl '/Touch sensor'], 11);                     % touch sensor SIG -> D11
+ed = [mdl '/Cliff sensors'];
 cl = renameIf([ed '/Digital Input1'], 'Cliff left (D7)');   % feeds the x2 gain
 cr = renameIf([ed '/Digital Input'],  'Cliff right (D8)');  % feeds the x1 input
 setPin(cl, 7);  setPin(cr, 8);
@@ -106,7 +106,7 @@ fprintf('3b. Pins: touch D11, cliff left D7, cliff right D8\n');
 % ---------- 4. sound ----------
 old = [mdl '/SoundPlayer (a faire)'];
 if getSimulinkBlockHandle(old) > 0, removeLines(old); delete_block(old); end
-sp = addFcn([mdl '/SoundPlayer'], fullfile(fcnDir,'soundPlayer.m'), ...
+sp = addFcn([mdl '/Sound player'], fullfile(fcnDir,'soundPlayer.m'), ...
      {'Ts','soundOn'}, [675 290 785 340]);
 buz = [mdl '/Buzzer'];
 removeLines(buz, 'in', 1);
