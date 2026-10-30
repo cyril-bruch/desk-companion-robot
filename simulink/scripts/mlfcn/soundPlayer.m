@@ -26,7 +26,7 @@ lastSnd = snd;
 
 freq = 0;
 if idx > 0
-    freq = F(mel, idx);
+    freq = F(mel, idx) * 0.5;                  % one octave lower: softer, quieter
     tLeft = tLeft - Ts*1000;
     if tLeft <= 0                               % next note
         idx = idx + 1;

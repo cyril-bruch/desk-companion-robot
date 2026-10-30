@@ -42,12 +42,18 @@ if cmd == wander
     end
 
 elseif cmd == dance
-    % happy wiggle on the spot: left, right, left, right...
-    if mod(t, dancePeriod) < dancePeriod/2
-        uL = speedDance;  uR = -speedDance;
-    else
-        uL = -speedDance; uR = speedDance;
-    end
+    % gentle wiggle: one wheel at a time, with a short gap before each
+    % change of direction (both motors reversing at once reset the Nano)
+    k = mod(t, dancePeriod) / dancePeriod;   % position in one wiggle, 0..1
+    if k < 0.2
+        uL = speedDance;                     % left wheel forward
+    elseif k >= 0.25 && k < 0.45
+        uL = -speedDance;                    % left wheel back
+    elseif k >= 0.5 && k < 0.7
+        uR = speedDance;                     % right wheel forward
+    elseif k >= 0.75 && k < 0.95
+        uR = -speedDance;                    % right wheel back
+    end                                      % gaps: wheels slow down to 0 (soft start)
 
 elseif cmd == backward
     uL = -speedBack; uR = -speedBack;
