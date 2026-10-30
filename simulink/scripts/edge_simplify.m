@@ -58,10 +58,10 @@ tr.LabelString = sprintf('Turn_Right\nentry:\ncmdMotor = alignRight\nface = face
 
 % chart data: turnTime in, alignTimeout out
 if isempty(ch.find('-isa', 'Stateflow.Data', 'Name', 'turnTime'))
-    d = Stateflow.Data(ch); d.Name = 'turnTime'; d.Scope = 'Parameter';
+    dt = Stateflow.Data(ch); dt.Name = 'turnTime'; dt.Scope = 'Parameter';
 end
-d = ch.find('-isa', 'Stateflow.Data', 'Name', 'alignTimeout');
-if ~isempty(d), delete(d); end
+da = ch.find('-isa', 'Stateflow.Data', 'Name', 'alignTimeout');
+if ~isempty(da), delete(da); end
 
 save_system(mdl);
 try
