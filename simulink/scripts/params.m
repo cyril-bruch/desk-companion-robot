@@ -4,7 +4,7 @@
 %  Pin map (Arduino Nano R4, as wired) - set directly in the Arduino blocks:
 %    D3  passive buzzer (I/O, low-level trigger)
 %    D5  DRV8833 IN4 (right motor)        D6  DRV8833 IN3 (right motor)
-%    D7  right cliff sensor (DO)          D8  left cliff sensor (DO)
+%    D7  left cliff sensor (DO)           D8  right cliff sensor (DO)
 %    D9  DRV8833 IN2 (left motor)         D10 DRV8833 IN1 (left motor)
 %    D11 touch sensor TTP223 (SIG)
 %    A0  battery voltage (after the switch)
@@ -38,8 +38,8 @@ sleepTime    = 180;   % [s] wandering without being petted -> sleep
 
 %% ---------- Edge-handling timing ----------
 stopTime     = 1.5;   % [s] frozen in surprise
-alignTimeout = 3;     % [s] max duration of the alignment facing the void
-backTime     = 2;     % [s] reverse after alignment
+alignTimeout = 2;     % [s] max duration of the alignment facing the void
+backTime     = 1;     % [s] reverse after alignment (no cliff sensor at the back: keep it short)
 
 %% ---------- Motor commands (cmdMotor) ----------
 brake        = 0;
@@ -55,7 +55,7 @@ pwmMax       = 0.80;  % max duty: 6 V motors on 7.5 V -> 80 % = 6 V average
 pwmMin       = 0.30;  % duty under which the motors do not start (tune on the robot)
 rampTime     = 0.4;   % [s] soft start: 0 -> full speed (braking is immediate)
 dirLeft      = -1;    % set to -1 if the left wheel turns backwards when it should go forward
-dirRight     = -1;    % same for the right wheel
+dirRight     = 1;     % same for the right wheel
 
 speedWander  = 0.45;   % small steps forward
 speedTurn    = 0.45;  % outer wheel of a curve while wandering

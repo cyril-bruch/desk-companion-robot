@@ -5,7 +5,7 @@
 %   2. Battery: A0 read every Ts, converted to volts and low-pass filtered.
 %   3. ACTIONNEURS: cmdMotor -> motion generator (wander/dance/back/align)
 %                   -> soft start -> DRV8833 truth table -> PWM D10 D9 D6 D5.
-%      + sensor pins: touch D11, cliff left D8, cliff right D7.
+%      + sensor pins: touch D11, cliff left D7, cliff right D8.
 %   4. Sound: chart "sound" code -> melody player -> Buzzer_tone (D3).
 %   5. Chart: after an edge go back to Wander (not Sleep), petting while
 %      wandering makes it happy, a little yawn when it falls asleep.
@@ -98,10 +98,10 @@ fprintf('3. ACTIONNEURS: motionGen -> soft start -> drv8833 -> PWM D10 D9 D6 D5\
 % ---------- 3b. sensor pins (as wired on the robot) ----------
 setPin([mdl '/pet captor'], 11);                     % touch sensor SIG -> D11
 ed = [mdl '/edge detector'];
-cl = renameIf([ed '/Digital Input1'], 'Cliff left (D8)');   % feeds the x2 gain
-cr = renameIf([ed '/Digital Input'],  'Cliff right (D7)');  % feeds the x1 input
-setPin(cl, 8);  setPin(cr, 7);
-fprintf('3b. Pins: touch D11, cliff left D8, cliff right D7\n');
+cl = renameIf([ed '/Digital Input1'], 'Cliff left (D7)');   % feeds the x2 gain
+cr = renameIf([ed '/Digital Input'],  'Cliff right (D8)');  % feeds the x1 input
+setPin(cl, 7);  setPin(cr, 8);
+fprintf('3b. Pins: touch D11, cliff left D7, cliff right D8\n');
 
 % ---------- 4. sound ----------
 old = [mdl '/SoundPlayer (a faire)'];

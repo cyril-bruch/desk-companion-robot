@@ -24,7 +24,7 @@ deployed on an **Arduino Nano R4** with the Simulink Support Package for Arduino
 | D3 | buzzer I/O |
 | D5 / D6 | DRV8833 IN4 / IN3 (right motor, PWM) |
 | D9 / D10 | DRV8833 IN2 / IN1 (left motor, PWM) |
-| D7 / D8 | right / left cliff sensor DO |
+| D7 / D8 | left / right cliff sensor DO |
 | D11 | touch sensor SIG |
 | A0 | battery voltage (after the switch) |
 | A4 / A5 | OLED SCK / SDA |
