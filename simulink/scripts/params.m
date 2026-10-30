@@ -33,7 +33,7 @@ tauBatt      = 1;     % [s] low-pass filter on the battery voltage
 
 %% ---------- Behaviour timing ----------
 endHappy     = 3;     % [s] dance duration
-wanderWait   = 5;     % [s] awake and idle -> start wandering
+wanderWait   = 60;     % [s] awake and idle -> start wandering
 sleepTime    = 180;   % [s] wandering without being petted -> sleep
 
 %% ---------- Edge-handling timing ----------
