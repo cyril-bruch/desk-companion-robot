@@ -13,6 +13,9 @@ end
 t = t + Ts;
 
 uL = 0; uR = 0; brkL = false; brkR = false;
+if t < 0.2 && cmd ~= 0          % short coast between two moves: the wheels slow
+    return                      % down before the next one (no current spike)
+end
 
 if cmd == wander
     % random sequence: pause -> (step forward OR turn on the spot) -> pause ...

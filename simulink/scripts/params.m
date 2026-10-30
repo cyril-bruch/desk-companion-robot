@@ -57,10 +57,10 @@ rampTime     = 0.4;   % [s] soft start: 0 -> full speed (braking is immediate)
 dirLeft      = 1;     % set to -1 if the left wheel turns backwards when it should go forward
 dirRight     = 1;     % same for the right wheel
 
-speedWander  = 0.6;   % small steps forward
-speedTurn    = 0.5;   % turning on the spot while wandering
+speedWander  = 0.45;   % small steps forward
+speedTurn    = 0.4;    % turning on the spot while wandering
 speedDance   = 0.4;   % happy wiggle (one wheel at a time)
-speedBack    = 0.5;   % reverse after an edge
+speedBack    = 0.35;   % reverse after an edge
 speedAlign   = 0.4;   % alignment facing the void
 
 % Wander = random sequence: pause -> (step forward OR turn on the spot) -> pause ...
