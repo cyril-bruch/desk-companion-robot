@@ -38,16 +38,16 @@ sleepTime    = 180;   % [s] wandering without being petted -> sleep
 
 %% ---------- Edge-handling timing ----------
 stopTime     = 1.5;   % [s] frozen in surprise
-alignTimeout = 2;     % [s] max duration of the alignment facing the void
-backTime     = 1;     % [s] reverse after alignment (no cliff sensor at the back: keep it short)
+turnTime     = 0.8;   % [s] turn away from the void after backing up
+backTime     = 1;     % [s] reverse first (no cliff sensor at the back: keep it short)
 
 %% ---------- Motor commands (cmdMotor) ----------
 brake        = 0;
 dance        = 1;
 wander       = 2;
 backward     = 3;
-alignRight   = 4;     % right wheel braked, left wheel slowly forward
-alignLeft    = 5;     % left wheel braked, right wheel slowly forward
+alignRight   = 4;     % right wheel braked, left wheel slowly forward -> turns right
+alignLeft    = 5;     % left wheel braked, right wheel slowly forward -> turns left
 
 %% ---------- Motors (ACTIONNEURS) ----------
 % Wheel speeds are fractions (0..1) of the usable range [pwmMin .. pwmMax].
@@ -57,17 +57,17 @@ rampTime     = 0.4;   % [s] soft start: 0 -> full speed (braking is immediate)
 dirLeft      = -1;    % set to -1 if the left wheel turns backwards when it should go forward
 dirRight     = 1;     % same for the right wheel
 
-speedWander  = 0.45;   % small steps forward
-speedTurn    = 0.45;  % outer wheel of a curve while wandering
+speedWander  = 0.4;    % small steps forward
+speedTurn    = 0.45;  % moving wheel of a small turn while wandering (other wheel stopped)
 speedDance   = 0.4;   % happy wiggle (one wheel at a time)
 speedBack    = 0.35;  % reverse after an edge (gentle: both motors start together)
-speedAlign   = 0.4;   % alignment facing the void
+speedAlign   = 0.4;   % turn away from the void after backing up
 
-% Wander = random sequence: pause -> (step forward OR gentle curve) -> pause ...
-wanderGo       = [0.4 1.2];  % [s] min / max duration of a step forward
-wanderTurn     = [0.6 1.5];  % [s] min / max duration of a curve
+% Wander = random sequence: pause -> (short step forward OR small turn) -> pause ...
+wanderGo       = [0.3 0.6];  % [s] min / max duration of a step forward (short: little inertia)
+wanderTurn     = [0.4 0.9];  % [s] min / max duration of a small turn
 wanderPause    = [1 3];      % [s] min / max pause between moves
-wanderTurnProb = 0.5;        % probability that the next move is a curve
+wanderTurnProb = 0.5;        % probability that the next move is a turn
 dancePeriod    = 1.6;        % [s] one full wiggle (left fwd/back, right fwd/back)
 
 %% ---------- Eye expressions (face) ----------
