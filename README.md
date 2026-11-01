@@ -9,8 +9,6 @@
 <p align="center"><em>Meet Rosita. She was built as a birthday gift, and the person she was made for chose her name.<br>
 Happy birthday, Mum!</em></p>
 
-<p align="center"><a href="media/demo.mp4">Watch the full video (MP4)</a></p>
-
 A small desk robot with animated eyes, little sounds and a touch-sensitive head. It sleeps until you pet it, wakes up, wiggles happily, then wanders around the desk in short steps and small turns. Two infrared sensors look at the desk just in front of the wheels: when one of them sees the edge, the robot stops, backs up and turns away from the void.
 
 The whole behaviour is a **Simulink** model with a **Stateflow** state machine, deployed to an **Arduino Nano R4**. Rosita was designed as a birthday gift: 3D-printed body, battery-powered, rechargeable over USB-C.
