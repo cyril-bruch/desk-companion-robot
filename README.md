@@ -1,13 +1,19 @@
-# Desk Companion Robot (Simulink + Stateflow)
+# Rosita, a Desk Companion Robot (Simulink + Stateflow)
 
-<!-- Photo / demo: drop media/robot.jpg and media/demo.gif, then uncomment
-![The robot](media/robot.jpg)
-![Demo](media/demo.gif)
--->
+<p align="center">
+  <img src="media/rosita.jpg" alt="Rosita, the desk companion robot" width="300">
+  &nbsp;&nbsp;
+  <img src="media/demo.gif" alt="Rosita waking up and wandering on the desk" width="300">
+</p>
+
+<p align="center"><em>Meet Rosita. She was built as a birthday gift, and the person she was made for chose her name.<br>
+Happy birthday, Mum!</em></p>
+
+<p align="center"><a href="media/demo.mp4">Watch the full video (MP4)</a></p>
 
 A small desk robot with animated eyes, little sounds and a touch-sensitive head. It sleeps until you pet it, wakes up, wiggles happily, then wanders around the desk in short steps and small turns. Two infrared sensors look at the desk just in front of the wheels: when one of them sees the edge, the robot stops, backs up and turns away from the void.
 
-The whole behaviour is a **Simulink** model with a **Stateflow** state machine, deployed to an **Arduino Nano R4**. The robot was designed as a birthday gift: 3D-printed body, battery-powered, rechargeable over USB-C.
+The whole behaviour is a **Simulink** model with a **Stateflow** state machine, deployed to an **Arduino Nano R4**. Rosita was designed as a birthday gift: 3D-printed body, battery-powered, rechargeable over USB-C.
 
 ## Hardware
 
@@ -171,6 +177,8 @@ All tunable values live in `params.m`. Change a value and redeploy.
 ## 3D printing
 
 Parametric sources in `cad/src/robot.py` (Python / CadQuery), print-ready STL files and ready-made plates in `cad/print/`, a 3D preview in `cad/preview/`. Printed in PLA (pink body, white face and wheels) on a FlashForge Dreamer; slicer settings in [`docs/impression.md`](docs/impression.md) and assembly guide in [`docs/assemblage.md`](docs/assemblage.md) (in French).
+
+<p align="center"><img src="media/assembly.jpg" alt="Wiring and assembly in progress" width="300"><br><em>Wiring in progress, before closing the shell.</em></p>
 
 ## Roadmap
 
